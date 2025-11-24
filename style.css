@@ -1,0 +1,143 @@
+/* style.css */
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap');
+
+body {
+    background-color: #121212; 
+    color: #4CAF50; 
+    font-family: 'Roboto Mono', monospace; 
+    margin: 0;
+    padding: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+}
+
+.container {
+    display: flex;
+    gap: 40px;
+    max-width: 1400px;
+    width: 100%;
+}
+
+/* Base Window Styling */
+.status-window, .quest-window {
+    border: 1px solid #4CAF50;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.4); 
+    background-color: rgba(20, 20, 20, 0.9);
+    width: 50%; 
+    box-sizing: border-box;
+}
+
+h1, h2 {
+    color: #FFC107; 
+    text-shadow: 0 0 5px rgba(255, 193, 7, 0.6);
+    border-bottom: 2px solid #4CAF50;
+    padding-bottom: 8px;
+    margin-top: 0;
+}
+
+hr {
+    border-color: #388E3C;
+    margin: 20px 0;
+}
+
+/* Stats Group Styling */
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    font-size: 1.1em;
+}
+
+.stat-value {
+    font-weight: bold;
+    color: #03A9F4; 
+}
+
+/* Stat Allocation Button */
+.allocate-btn {
+    background-color: #FFC107;
+    color: #121212;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 8px;
+    margin-left: 10px;
+    cursor: pointer;
+    font-size: 0.8em;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.allocate-btn:hover {
+    background-color: #FFEB3B;
+}
+
+/* Quest and Button Styling */
+#quest-list {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+#quest-list li {
+    background-color: rgba(76, 175, 80, 0.1);
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    border-left: 5px solid #4CAF50;
+}
+
+.controls {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* Daily Quest Button */
+#complete-quest-btn {
+    background-color: #E91E63; 
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+    flex-grow: 1;
+}
+
+#complete-quest-btn:hover {
+    background-color: #C2185B;
+}
+
+/* Voice Command Button */
+#voice-command-btn {
+    background-color: #03A9F4; /* Blue for the voice command */
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+    flex-grow: 1;
+}
+
+#voice-command-btn:hover {
+    background-color: #0288D1;
+}
+
+#message {
+    margin-top: 15px;
+    font-size: 1.1em;
+    color: #03A9F4;
+}
+
+#stat-points-display {
+    color: #E91E63; 
+    font-weight: bold;
+    font-size: 1.2em;
+}

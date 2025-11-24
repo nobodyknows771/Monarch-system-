@@ -11,9 +11,15 @@
     <div class="container">
         <div class="status-window">
             <h1>[STATUS WINDOW]</h1>
-            <p>Name: <span id="player-name">The Monarch</span></p>
-            <p>Level: <span id="player-level">1</span></p>
-            <p>XP: <span id="player-xp-current">0</span> / <span id="player-xp-max">100</span></p>
+            <p class="status-level-info">Name: <span id="player-name">Sung Jin-Woo</span> | Level: <span id="player-level">1</span></p>
+            
+            <div class="xp-text">
+                XP: <span id="player-xp-current">0</span> / <span id="player-xp-max">100</span>
+            </div>
+            <div class="xp-bar-container">
+                <div class="xp-bar" id="xp-progress-bar"></div>
+            </div>
+
             <hr>
             <h2>Stat Points Available: <span id="stat-points-display">0</span></h2>
             <hr>
@@ -31,7 +37,14 @@
                 <button class="allocate-btn" data-stat="per">+</button>
             </div>
             <hr>
-            <p>Health (HP): <span class="stat-value" id="stat-hp">100</span></p>
+            <div class="stat-item">
+                <p>Health (HP):</p>
+                <span class="stat-value" id="stat-hp">100</span>
+            </div>
+            <div class="stat-item">
+                <p>Protocol:</p>
+                <span class="stat-value" id="protocol-level">LOW-CORE</span>
+            </div>
         </div>
 
         <div class="quest-window">
@@ -44,8 +57,8 @@
                 <button id="voice-command-btn">🎙️ Talk to System</button>
             </div>
             
-            <p id="message"></p>
-            <p id="voice-status" style="margin-top:10px; color: #FFC107;"></p>
+            <p id="message">System initializing...</p>
+            <p id="voice-status" style="color: var(--color-secondary);"></p>
         </div>
     </div>
 

@@ -1,130 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SYSTEM | Only I Level Up</title>
-  <link rel="stylesheet" href="style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Monarch Training System</title>
+    <link rel="stylesheet" href="style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
 </head>
-<body class="system-body">
-  <!-- AUDIO SYSTEM -->
-  <audio id="bgm" loop preload="auto">
-    <source src="sources/solo.mp3" type="audio/mpeg">
-  </audio>
-  <audio id="clickSfx" preload="auto">
-    <source src="sources/click sound.wav" type="audio/wav">
-  </audio>
-  <audio id="levelUpSfx" preload="auto">
-    <source src="sources/levelup.mp3" type="audio/mpeg">
-  </audio>
-  <audio id="ashbornVoice" preload="auto">
-    <source src="sources/ashborn.mp3" type="audio/mpeg">
-  </audio>
-  <audio id="gateOpen" preload="auto">
-    <source src="data:audio/mpeg;base64,..." type="audio/mpeg"> <!-- Placeholder; use free SFX -->
-  </audio>
-  <audio id="shadowExtract" preload="auto">
-    <source src="data:audio/mpeg;base64,..." type="audio/mpeg"> <!-- Placeholder -->
-  </audio>
+<body>
 
-  <div class="overlay" id="app">
-    <!-- SETTINGS PANEL (Top-Right Hologram) -->
-    <div class="system-panel settings-panel">
-      <button id="muteBgm" class="system-btn">BGM: ON</button>
-      <button id="muteSfx" class="system-btn">SFX: ON</button>
-      <button id="resetData" class="system-btn danger">RESET</button>
+    <!-- Background music -->
+    <audio id="bgm" src="sources/solo.mp3" loop></audio>
+    <audio id="clickSound" src="sources/click sound.wav"></audio>
+    <audio id="levelUpSound" src="sources/levelup.mp3"></audio>
+
+    <div id="sound-controls">
+        <button id="toggleBGM">🔊 BGM</button>
+        <button id="toggleSFX">🎧 SFX</button>
     </div>
 
-    <!-- AWAKENING SCREEN (Initial Blue Window) -->
-    <div id="genderSelect" class="screen active system-window awaken-window">
-      <div class="window-header">
-        <h1 class="system-title">SYSTEM AWAKENED</h1>
-        <p class="system-subtitle">Select Vessel Profile</p>
-      </div>
-      <div class="gender-grid">
-        <div class="gender-card system-card" data-gender="male">
-          <img src="sources/male-avatar.png" alt="Male Hunter" class="avatar-img">
-          <p class="card-label">MALE HUNTER</p>
-        </div>
-        <div class="gender-card system-card" data-gender="female">
-          <img src="sources/female-avatar.png" alt="Female Hunter" class="avatar-img">
-          <p class="card-label">FEMALE HUNTER</p>
-        </div>
-      </div>
-    </div>
+    <header>
+        <h1 class="title">MONARCH TRAINING SYSTEM</h1>
+        <p class="subtitle">Rise and level up every day.</p>
+    </header>
 
-    <!-- MAIN SYSTEM INTERFACE -->
-    <div id="mainScreen" class="screen hidden system-window main-interface">
-      <!-- STATUS WINDOW -->
-      <div class="status-window">
-        <div class="player-header">
-          <img id="playerAvatar" src="" alt="Hunter" class="hunter-avatar">
-          <div class="stats-panel">
-            <h2 id="playerName" class="hunter-name">Sung Jinwoo</h2>
-            <p class="rank-line">RANK: <span id="playerRank">E</span> | LV. <span id="playerLevel">1</span></p>
-            <p class="exp-line">EXP: <span id="playerExp">0</span> / <span id="expToNext">100</span></p>
-            <div class="exp-bar">
-              <div id="expFill" class="exp-fill"></div>
-            </div>
-            <p id="shadowArmy" class="army-line">SHADOW SOLDIERS: <span id="armyCount">0</span></p>
-          </div>
-        </div>
-      </div>
+    <!-- Avatar Section -->
+    <section id="avatar-section">
+        <img id="current-avatar" src="sources/male-avatar.png" alt="avatar" />
+        <button id="switch-avatar">Switch Avatar</button>
+    </section>
 
-      <!-- DAILY QUEST WINDOW -->
-      <div class="quest-window">
-        <div class="window-header">
-          <h2 class="section-title">DAILY QUEST</h2>
-          <p class="timer-line">NEXT RESET: <span id="timer">00:00:00</span></p>
-        </div>
-        <div id="questList" class="quest-list"></div>
-        <button id="completeQuest" class="system-btn primary disabled">COMPLETE QUEST</button>
-      </div>
+    <!-- Daily Quest Section -->
+    <section id="quests">
+        <h2>Daily Quests</h2>
+        <ul id="quest-list"></ul>
+        <button id="reset-quests">Reset Daily Quests</button>
+        <p id="xp-display">XP: 0</p>
+    </section>
 
-      <!-- GATE RAID WINDOW -->
-      <div class="gate-window">
-        <div class="window-header">
-          <h2 class="section-title">AVAILABLE GATES</h2>
-        </div>
-        <div id="gateList" class="gate-list"></div>
-      </div>
+    <!-- Exercise Library -->
+    <section id="exercise-section">
+        <h2>Training Library</h2>
+        <p class="section-hint">Choose muscle group</p>
 
-      <!-- BOSS RAID ALERT (Floating Window) -->
-      <div id="bossRaidBanner" class="floating-window hidden boss-alert">
-        <h2 class="alert-title">RED GATE EMERGENCY</h2>
-        <p>BOSS: ANT KING BERU</p>
-        <button id="fightBoss" class="system-btn danger large">ENTER BOSS RAID (10x EXP)</button>
-      </div>
+        <select id="muscle-select">
+            <option value="chest">Chest</option>
+            <option value="back">Back</option>
+            <option value="legs">Legs</option>
+            <option value="shoulders">Shoulders</option>
+            <option value="arms">Arms</option>
+            <option value="waist">Abs</option>
+        </select>
 
-      <!-- SHADOW INVENTORY WINDOW -->
-      <div class="inventory-window">
-        <div class="window-header">
-          <h2 class="section-title">SHADOW EXTRACTION</h2>
-        </div>
-        <div id="shadowInventory" class="inventory-list">
-          <p class="empty-state">No shadows extracted. Hunt stronger foes.</p>
-        </div>
-      </div>
-    </div>
+        <div id="exercise-container"></div>
+    </section>
 
-    <!-- SYSTEM NOTIFICATIONS (Floating Blue Popups) -->
-    <div id="levelUpPopup" class="floating-window hidden notification">
-      <h1 class="notify-title">LEVEL UP!</h1>
-      <p>Your power has increased.</p>
-    </div>
-
-    <div id="ashbornAwaken" class="floating-window hidden monarch-notify">
-      <h1 class="monarch-title">ARISE</h1>
-      <p class="monarch-text">I am the Shadow Monarch. You are my vessel.</p>
-    </div>
-
-    <div id="shadowExtractPopup" class="floating-window hidden notification">
-      <h1 class="notify-title">EXTRACTION SUCCESS</h1>
-      <p id="extractedName">A new shadow rises.</p>
-    </div>
-  </div>
-
-  <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>

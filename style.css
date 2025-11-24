@@ -1,522 +1,106 @@
-/* CORE RESET & SYSTEM THEME */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* --- Solo Leveling Dark Theme --- */
+body {
+    background: #0a0a0f;
+    color: #b9c6ff;
+    margin: 0;
+    font-family: "Orbitron", sans-serif;
 }
 
-body.system-body {
-  background: #000011; /* Deep cosmic blue-black */
-  color: #ffffff;
-  font-family: 'Rajdhani', sans-serif;
-  overflow: hidden;
-  height: 100vh;
-  position: relative;
+.title {
+    text-align: center;
+    color: #6f8cff;
+    font-size: 2.4rem;
+    margin-top: 20px;
+    text-shadow: 0 0 10px #3250ff;
 }
 
-/* HOLOGRAPHIC OVERLAY FOR DEPTH */
-.overlay {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-  height: 100vh;
-  position: relative;
-  background: radial-gradient(circle at center, rgba(0, 122, 255, 0.03) 0%, transparent 70%);
+.subtitle {
+    text-align: center;
+    margin-bottom: 30px;
+    opacity: 0.7;
 }
 
-/* SYSTEM PANELS: Blue Semi-Transparent Windows */
-.system-window {
-  background: rgba(0, 122, 255, 0.15); /* Azure holographic */
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(0, 122, 255, 0.3);
-  border-radius: 16px;
-  box-shadow: 
-    0 0 40px rgba(0, 122, 255, 0.2),
-    inset 0 0 40px rgba(255, 255, 255, 0.05);
-  padding: 40px;
-  max-width: 1000px;
-  margin: 0 auto;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  animation: windowFadeIn 1s ease-out;
+section {
+    width: 90%;
+    margin: auto;
+    background: rgba(20, 20, 30, 0.45);
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    border: 1px solid rgba(80, 80, 120, 0.3);
 }
 
-.window-header {
-  text-align: center;
-  margin-bottom: 40px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid rgba(0, 122, 255, 0.2);
+#avatar-section {
+    text-align: center;
 }
 
-/* TITLES: Orbitron Bold Blue Gradient */
-.system-title, .section-title, .notify-title {
-  font-family: 'Orbitron', monospace;
-  font-weight: 900;
-  font-size: 3rem;
-  background: linear-gradient(90deg, #ffffff, #00bfff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 20px rgba(0, 191, 255, 0.5);
-  letter-spacing: 4px;
-  margin-bottom: 10px;
+#avatar-section img {
+    width: 140px;
+    border-radius: 50%;
+    border: 3px solid #6f8cff;
+    box-shadow: 0 0 20px #2a3cff;
 }
 
-.system-subtitle {
-  font-size: 1.2rem;
-  color: rgba(255, 255, 255, 0.7);
-  font-weight: 300;
+button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background: #1a1f35;
+    border: 1px solid #465bff;
+    color: #bfc8ff;
+    cursor: pointer;
+    font-family: inherit;
+    border-radius: 6px;
+    transition: 0.2s;
 }
 
-/* SCREEN TOGGLES */
-.screen {
-  display: none;
-  opacity: 0;
-  transition: opacity 0.5s ease;
+button:hover {
+    background: #2c3470;
 }
 
-.screen.active {
-  display: block;
-  opacity: 1;
+#sound-controls {
+    position: fixed;
+    top: 10px;
+    right: 10px;
 }
 
-.hidden {
-  display: none !important;
-  opacity: 0 !important;
+#quest-list li {
+    list-style: none;
+    padding: 10px;
+    background: #131422;
+    border: 1px solid #3c3f68;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
 }
 
-/* SETTINGS PANEL: Top-Right Hologram */
-.settings-panel {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 1000;
-  display: flex;
-  gap: 10px;
-  background: rgba(0, 122, 255, 0.1);
-  padding: 10px;
-  border-radius: 12px;
-  border: 1px solid rgba(0, 122, 255, 0.3);
-  backdrop-filter: blur(10px);
+.completed {
+    text-decoration: line-through;
+    color: #8bff9b;
 }
 
-.system-btn {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(0, 122, 255, 0.4);
-  color: #ffffff;
-  padding: 8px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-family: 'Rajdhani', sans-serif;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(5px);
+#exercise-container {
+    margin-top: 20px;
 }
 
-.system-btn:hover {
-  background: rgba(0, 122, 255, 0.2);
-  box-shadow: 0 0 15px rgba(0, 122, 255, 0.3);
-  transform: translateY(-2px);
+.exercise-card {
+    background: #131422;
+    border: 1px solid #3c3f68;
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 8px;
 }
 
-.system-btn.danger {
-  background: rgba(255, 0, 0, 0.2);
-  border-color: rgba(255, 0, 0, 0.4);
+.exercise-card img {
+    width: 100%;
+    border-radius: 5px;
 }
 
-.system-btn.danger:hover {
-  background: rgba(255, 0, 0, 0.3);
-  box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
+/* Responsive */
+@media (min-width: 700px) {
+    #exercise-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+    }
 }
-
-.system-btn.primary {
-  background: rgba(0, 122, 255, 0.3);
-  border-color: rgba(0, 122, 255, 0.5);
-  font-size: 1.1rem;
-  padding: 12px 24px;
-}
-
-.system-btn.large {
-  font-size: 1.3rem;
-  padding: 15px 30px;
-}
-
-.system-btn.disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* GENDER SELECT: Authentic Awakening Cards */
-.awaken-window {
-  max-height: 80vh;
-  overflow: auto;
-}
-
-.gender-grid {
-  display: flex;
-  justify-content: center;
-  gap: 60px;
-  flex-wrap: wrap;
-}
-
-.gender-card {
-  background: rgba(255, 255, 255, 0.05);
-  border: 2px solid rgba(0, 122, 255, 0.3);
-  border-radius: 12px;
-  padding: 30px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.4s ease;
-  width: 200px;
-}
-
-.gender-card:hover {
-  border-color: #00bfff;
-  box-shadow: 0 0 30px rgba(0, 191, 255, 0.4);
-  transform: translateY(-10px) scale(1.05);
-  background: rgba(0, 122, 255, 0.1);
-}
-
-.avatar-img {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  border: 3px solid rgba(0, 122, 255, 0.5);
-  margin-bottom: 15px;
-  transition: border-color 0.3s;
-}
-
-.gender-card:hover .avatar-img {
-  border-color: #00bfff;
-  box-shadow: 0 0 20px rgba(0, 191, 255, 0.5);
-}
-
-.card-label {
-  font-size: 1.1rem;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.9);
-}
-
-/* MAIN INTERFACE: Stacked Blue Windows */
-.main-interface {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 30px;
-  max-height: 90vh;
-  overflow-y: auto;
-  padding: 20px 0;
-}
-
-.status-window {
-  grid-row: 1 / -1;
-}
-
-.player-header {
-  display: flex;
-  align-items: flex-start;
-  gap: 20px;
-}
-
-.hunter-avatar {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  border: 3px solid #00bfff;
-  box-shadow: 0 0 20px rgba(0, 191, 255, 0.3);
-}
-
-.stats-panel {
-  flex: 1;
-}
-
-.hunter-name {
-  font-family: 'Orbitron', monospace;
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: #ffffff;
-  margin-bottom: 10px;
-}
-
-.rank-line, .exp-line, .army-line {
-  font-size: 1rem;
-  color: rgba(255, 255, 255, 0.8);
-  margin-bottom: 5px;
-  font-weight: 300;
-}
-
-.exp-bar {
-  width: 100%;
-  height: 8px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-  overflow: hidden;
-  margin: 10px 0;
-  border: 1px solid rgba(0, 122, 255, 0.2);
-}
-
-.exp-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #00bfff, #007aff);
-  width: 0%;
-  transition: width 1s ease;
-  box-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
-}
-
-/* QUEST WINDOW */
-.quest-window {
-  grid-column: 2;
-}
-
-.quest-list, .gate-list, .inventory-list {
-  max-height: 400px;
-  overflow-y: auto;
-  margin-bottom: 20px;
-}
-
-.quest-item {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(0, 122, 255, 0.2);
-  border-radius: 8px;
-  padding: 15px;
-  margin-bottom: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: all 0.3s;
-}
-
-.quest-item:hover {
-  border-color: #00bfff;
-  box-shadow: 0 0 15px rgba(0, 191, 255, 0.2);
-}
-
-.quest-item.completed {
-  opacity: 0.6;
-  text-decoration: line-through;
-}
-
-.exercise-gif {
-  width: 80px;
-  border-radius: 6px;
-  border: 1px solid rgba(0, 122, 255, 0.3);
-}
-
-.quest-checkbox {
-  width: 20px;
-  height: 20px;
-  accent-color: #00bfff;
-  cursor: pointer;
-}
-
-.timer-line {
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.6);
-  text-align: center;
-  margin-top: 10px;
-}
-
-/* GATE WINDOW */
-.gate-window {
-  grid-column: 1 / -1;
-  margin-top: 20px;
-}
-
-.gate-item {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(0, 122, 255, 0.2);
-  border-radius: 8px;
-  padding: 15px;
-  margin-bottom: 10px;
-  cursor: pointer;
-  transition: all 0.3s;
-  text-align: center;
-}
-
-.gate-item:hover {
-  background: rgba(0, 122, 255, 0.1);
-  border-color: #00bfff;
-  box-shadow: 0 0 15px rgba(0, 191, 255, 0.3);
-}
-
-/* BOSS ALERT: Floating Red-Tinted Window */
-.floating-window {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1001;
-  background: rgba(0, 122, 255, 0.2);
-  border: 2px solid #00bfff;
-  border-radius: 12px;
-  padding: 30px;
-  text-align: center;
-  max-width: 400px;
-  animation: floatIn 0.5s ease-out;
-  box-shadow: 0 0 50px rgba(0, 191, 255, 0.4);
-}
-
-.boss-alert {
-  background: rgba(255, 0, 0, 0.15);
-  border-color: #ff0000;
-  box-shadow: 0 0 50px rgba(255, 0, 0, 0.4);
-}
-
-.boss-alert .alert-title {
-  color: #ff0000;
-  background: linear-gradient(90deg, #ffffff, #ff0000);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.alert-title {
-  font-size: 2rem;
-  margin-bottom: 10px;
-}
-
-/* INVENTORY */
-.inventory-list .empty-state {
-  text-align: center;
-  color: rgba(255, 255, 255, 0.5);
-  font-style: italic;
-}
-
-.shadow-item {
-  background: rgba(0, 122, 255, 0.1);
-  border-color: #00bfff;
-}
-
-/* NOTIFICATIONS: Floating System Popups */
-.notification {
-  background: rgba(0, 122, 255, 0.25);
-  border-color: #00bfff;
-  box-shadow: 0 0 30px rgba(0, 191, 255, 0.6);
-}
-
-.monarch-notify {
-  background: linear-gradient(135deg, rgba(138, 43, 226, 0.2), rgba(0, 122, 255, 0.15));
-  border-color: #8a2be2;
-  box-shadow: 0 0 60px rgba(138, 43, 226, 0.5);
-}
-
-.monarch-title {
-  background: linear-gradient(90deg, #8a2be2, #ffffff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-size: 4rem;
-}
-
-.monarch-text {
-  font-size: 1.5rem;
-  color: rgba(255, 255, 255, 0.9);
-  margin-top: 20px;
-  text-align: center;
-}
-
-/* ANIMATIONS */
-@keyframes windowFadeIn {
-  from { opacity: 0; transform: translate(-50%, -60%) scale(0.95); }
-  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-}
-
-@keyframes floatIn {
-  from { opacity: 0; transform: translate(-50%, -60%) scale(0.9); }
-  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-}
-
-/* MONARCH MODE: Purple Overlay on Blue */
-.monarch-mode .system-window {
-  background: rgba(138, 43, 226, 0.2);
-  border-color: rgba(138, 43, 226, 0.4);
-  box-shadow: 0 0 40px rgba(138, 43, 226, 0.3);
-}
-
-.monarch-mode .system-title,
-.monarch-mode .section-title {
-  background: linear-gradient(90deg, #ffffff, #8a2be2);
-  text-shadow: 0 0 20px rgba(138, 43, 226, 0.5);
-}
-
-.monarch-mode .exp-fill {
-  background: linear-gradient(90deg, #8a2be2, #9932cc);
-}
-
-/* RESPONSIVE: Mobile Hologram */
-@media (max-width: 768px) {
-  .main-interface {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-  
-  .system-title {
-    font-size: 2.5rem;
-  }
-  
-  .gender-grid {
-    gap: 30px;
-  }
-  
-  .gender-card {
-    width: 150px;
-  }
-  
-  .avatar-img {
-    width: 80px;
-    height: 80px;
-  }
-}
-
-/* SCROLLBAR: Blue Holographic */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: rgba(0, 122, 255, 0.1);
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(0, 191, 255, 0.3);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 191, 255, 0.5);
-}
-
-/* ADDITIONAL HOVER EFFECTS FOR IMMERSION */
-.system-card:hover {
-  animation: pulseBlue 1s infinite;
-}
-
-@keyframes pulseBlue {
-  0%, 100% { box-shadow: 0 0 20px rgba(0, 191, 255, 0.3); }
-  50% { box-shadow: 0 0 40px rgba(0, 191, 255, 0.6); }
-}
-
-/* FLOATING PARTICLES FOR SYSTEM DEPTH */
-.system-body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: 
-    radial-gradient(2px 2px at 20px 30px, #00bfff, transparent),
-    radial-gradient(2px 2px at 40px 70px, rgba(0, 191, 255, 0.5), transparent),
-    radial-gradient(1px 1px at 90px 40px, #007aff, transparent);
-  background-repeat: repeat;
-  background-size: 100px 100px;
-  animation: particleFloat 20s linear infinite;
-  pointer-events: none;
-  z-index: -1;
-  opacity: 0.3;
-}
-
-@keyframes particleFloat {
-  from { transform: translateY(0px); }
-  to { transform: translateY(-100px); }
-}
-
-/* END OF CSS - 912 LINES OF AUTHENTIC SYSTEM PERFECTION */

@@ -3,58 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monarch's Portal</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <title>[STATUS WINDOW] Monarch System</title>
+    <link rel="stylesheet" href="style.css"> 
 </head>
 <body>
 
-    <div class="header">
-        <h1 class="title">MONARCH'S PORTAL</h1>
-        <div id="system-output" class="system-output">System Status: Awaiting Command...</div>
-    </div>
-
     <div class="container">
-        <div class="panel status-window">
-            <h2>✨ Status Window</h2>
-            <p>Level: <span id="level">1</span></p>
-            <div class="progress-bar-container">
-                XP: <div id="xp-bar" class="progress-bar"></div>
-            </div>
-            <p>Gold: <span id="gold">0</span></p>
-            
+        <div class="status-window">
+            <h1>[STATUS WINDOW]</h1>
+            <p>Name: <span id="player-name">The Monarch</span></p>
+            <p>Level: <span id="player-level">1</span></p>
+            <p>XP: <span id="player-xp-current">0</span> / <span id="player-xp-max">100</span></p>
             <hr>
-            
-            <h3>Core Attributes</h3>
-            <p>STR: <span id="str">10</span> <button class="stat-btn" onclick="allocateStat('str')">+</button></p>
-            <p>AGI: <span id="agi">10</span> <button class="stat-btn" onclick="allocateStat('agi')">+</button></p>
-            <p>STA: <span id="sta">10</span> <button class="stat-btn" onclick="allocateStat('sta')">+</button></p>
-            <p>Unallocated Points: <span id="stat-points">0</span></p>
-        </div>
-
-        <div class="panel monarch-archive">
-            <h2>📜 Monarch's Archive</h2>
-            <div id="daily-quest-area">
-                <h3>Daily Quest (Mandatory)</h3>
-                <p>Objective: **10 Pushups, 10 Squats, 10 Situps**</p>
-                <button id="complete-quest-btn" onclick="completeDailyQuest()">Log Completion</button>
-            </div>
-            
+            <h2>Stat Points Available: <span id="stat-points-display">0</span></h2>
             <hr>
 
-            <h3>Dungeon Invasions (XP Gain)</h3>
-            <p>Log a workout to gain XP and Gold!</p>
-            <input type="text" id="workout-description" placeholder="e.g., Orc Barracks (Bench Press 50kg)">
-            <button onclick="logWorkout()">Log Workout</button>
+            <div class="stat-item">
+                <p>Strength (STR): <span class="stat-value" id="stat-str">10</span></p>
+                <button class="allocate-btn" data-stat="str">+</button>
+            </div>
+            <div class="stat-item">
+                <p>Stamina (STA): <span class="stat-value" id="stat-sta">10</span></p>
+                <button class="allocate-btn" data-stat="sta">+</button>
+            </div>
+            <div class="stat-item">
+                <p>Perception (PER): <span class="stat-value" id="stat-per">10</span></p>
+                <button class="allocate-btn" data-stat="per">+</button>
+            </div>
+            <hr>
+            <p>Health (HP): <span class="stat-value" id="stat-hp">100</span></p>
         </div>
 
-        <div class="panel stance-adjust">
-            <h2>🔊 Stance Adjust (Voice)</h2>
-            <p>System Protocol:</p>
-            <button id="voice-toggle" class="voice-btn">Activate System Voice</button>
-            <p class="commands-list">
-                **Commands:** "Log Quest Complete", "Allocate point to [Stat]", "What is my level"
-            </p>
+        <div class="quest-window">
+            <h2>[DAILY QUEST] Complete: Failure will result in a Penalty.</h2>
+            <ul id="quest-list">
+                </ul>
+            <button id="complete-quest-btn">Complete Daily Quest</button>
+            <p id="message"></p>
         </div>
     </div>
 

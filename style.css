@@ -1,12 +1,14 @@
-/* style.css */
+/* style.css - Updated for Darker Theme and Alignment */
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap');
 
 body {
-    background-color: #121212; 
-    color: #4CAF50; 
+    /* Super dark background */
+    background-color: #080808; 
+    color: #4CAF50; /* System Green */
     font-family: 'Roboto Mono', monospace; 
     margin: 0;
     padding: 30px;
+    /* Center the entire content area */
     display: flex;
     justify-content: center;
     align-items: flex-start;
@@ -14,29 +16,32 @@ body {
 }
 
 .container {
-    display: flex;
-    gap: 40px;
-    max-width: 1400px;
+    /* Use CSS Grid to organize the two main windows */
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two equal columns */
+    gap: 30px;
+    max-width: 1500px;
     width: 100%;
 }
 
-/* Base Window Styling */
+/* Base Window Styling - Sharper Edges and Stronger Glow */
 .status-window, .quest-window {
-    border: 1px solid #4CAF50;
-    border-radius: 8px;
-    padding: 25px;
-    box-shadow: 0 0 15px rgba(76, 175, 80, 0.4); 
-    background-color: rgba(20, 20, 20, 0.9);
-    width: 50%; 
+    border: 3px solid #00ff00; /* Neon Green Border */
+    border-radius: 0; /* Sharp corners */
+    padding: 30px;
+    /* Stronger, more focused glow */
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.7), inset 0 0 5px rgba(0, 255, 0, 0.5); 
+    background-color: rgba(1, 1, 1, 0.95); /* Nearly black window */
     box-sizing: border-box;
 }
 
 h1, h2 {
-    color: #FFC107; 
-    text-shadow: 0 0 5px rgba(255, 193, 7, 0.6);
-    border-bottom: 2px solid #4CAF50;
-    padding-bottom: 8px;
+    color: #FFD700; /* Gold/Yellow for main titles (Monarch color) */
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
+    border-bottom: 2px solid #FFD700;
+    padding-bottom: 10px;
     margin-top: 0;
+    text-align: center; /* Center the headers */
 }
 
 hr {
@@ -44,13 +49,14 @@ hr {
     margin: 20px 0;
 }
 
-/* Stats Group Styling */
+/* Stats Group Styling - Better Spacing */
 .stat-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 5px 0;
-    font-size: 1.1em;
+    padding: 8px 0;
+    font-size: 1.2em;
+    border-bottom: 1px dashed #1a1a1a;
 }
 
 .stat-value {
@@ -60,14 +66,14 @@ hr {
 
 /* Stat Allocation Button */
 .allocate-btn {
-    background-color: #FFC107;
+    background-color: #FFD700;
     color: #121212;
     border: none;
     border-radius: 4px;
-    padding: 4px 8px;
+    padding: 4px 10px;
     margin-left: 10px;
     cursor: pointer;
-    font-size: 0.8em;
+    font-size: 1em;
     font-weight: bold;
     transition: background-color 0.2s;
 }
@@ -76,64 +82,60 @@ hr {
     background-color: #FFEB3B;
 }
 
-/* Quest and Button Styling */
+/* Quest List Styling */
 #quest-list {
     list-style-type: none;
     padding-left: 0;
 }
 
 #quest-list li {
-    background-color: rgba(76, 175, 80, 0.1);
-    padding: 10px;
+    background-color: rgba(0, 255, 0, 0.05); /* Very subtle green background */
+    padding: 12px;
     margin-bottom: 8px;
-    border-radius: 4px;
-    border-left: 5px solid #4CAF50;
+    border-left: 5px solid #FFD700; /* Gold marker */
 }
 
+/* Control Buttons Alignment (Flexbox) */
 .controls {
     display: flex;
     gap: 15px;
-    margin-top: 20px;
+    margin-top: 30px;
 }
 
 /* Daily Quest Button */
 #complete-quest-btn {
-    background-color: #E91E63; 
+    background-color: #E91E63; /* Pink for Action */
     color: white;
     border: none;
-    padding: 12px 20px;
+    padding: 15px 20px;
     cursor: pointer;
     font-weight: bold;
-    border-radius: 5px;
+    border-radius: 3px;
     transition: background-color 0.2s;
     flex-grow: 1;
 }
-
-#complete-quest-btn:hover {
-    background-color: #C2185B;
-}
+#complete-quest-btn:hover { background-color: #C2185B; }
 
 /* Voice Command Button */
 #voice-command-btn {
     background-color: #03A9F4; /* Blue for the voice command */
     color: white;
     border: none;
-    padding: 12px 20px;
+    padding: 15px 20px;
     cursor: pointer;
     font-weight: bold;
-    border-radius: 5px;
+    border-radius: 3px;
     transition: background-color 0.2s;
     flex-grow: 1;
 }
-
-#voice-command-btn:hover {
-    background-color: #0288D1;
-}
+#voice-command-btn:hover { background-color: #0288D1; }
 
 #message {
-    margin-top: 15px;
+    margin-top: 20px;
     font-size: 1.1em;
-    color: #03A9F4;
+    color: #FFEB3B;
+    text-align: center;
+    font-style: italic;
 }
 
 #stat-points-display {

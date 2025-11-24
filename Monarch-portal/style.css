@@ -1,130 +1,120 @@
-:root {
-    --bg-color: #1a1a2e;
-    --panel-color: #2c2b4c80; /* Semi-transparent blue-purple */
-    --neon-blue: #00ffff;
-    --neon-red: #ff0077;
-    --font-color: #e0e0e0;
-}
+/* Updated style.css */
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap');
 
 body {
-    background-color: var(--bg-color);
-    color: var(--font-color);
-    font-family: 'Orbitron', sans-serif;
+    background-color: #121212; /* Darker background */
+    color: #4CAF50; /* System Green */
+    font-family: 'Roboto Mono', monospace; /* Monospace font for system feel */
     margin: 0;
-    padding: 20px;
+    padding: 30px;
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    justify-content: center;
+    align-items: flex-start;
     min-height: 100vh;
-}
-
-.header {
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-.title {
-    color: var(--neon-blue);
-    text-shadow: 0 0 10px var(--neon-blue);
-    font-size: 2.5em;
-    letter-spacing: 5px;
-}
-
-.system-output {
-    background-color: #00000080;
-    border: 1px solid var(--neon-blue);
-    padding: 10px;
-    margin-top: 10px;
-    box-shadow: 0 0 10px var(--neon-blue);
-    animation: pulse 1.5s infinite alternate;
-}
-
-@keyframes pulse {
-    from { opacity: 0.8; }
-    to { opacity: 1; }
 }
 
 .container {
     display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
-    width: 90%;
-    max-width: 1200px;
+    gap: 40px;
+    max-width: 1400px;
+    width: 100%;
 }
 
-.panel {
-    background-color: var(--panel-color);
-    border: 2px solid var(--neon-blue);
-    box-shadow: 0 0 20px var(--neon-blue), inset 0 0 10px var(--neon-blue);
-    padding: 20px;
+/* Base Window Styling */
+.status-window, .quest-window {
+    border: 1px solid #4CAF50;
     border-radius: 8px;
-    flex: 1 1 300px; /* Makes panels flexible and wrap nicely */
+    padding: 25px;
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.4); /* Subtle glow effect */
+    background-color: rgba(20, 20, 20, 0.9);
+    width: 50%; /* Adjusted width */
+    box-sizing: border-box;
 }
 
-.panel h2, .panel h3 {
-    color: var(--neon-blue);
-    text-shadow: 0 0 5px var(--neon-blue);
-    border-bottom: 1px solid #00ffff50;
-    padding-bottom: 5px;
+h1, h2 {
+    color: #FFC107; /* Gold/Yellow for main titles */
+    text-shadow: 0 0 5px rgba(255, 193, 7, 0.6);
+    border-bottom: 2px solid #4CAF50;
+    padding-bottom: 8px;
     margin-top: 0;
 }
 
-/* STATS STYLING */
-.stat-btn {
-    background-color: var(--neon-red);
-    color: white;
+hr {
+    border-color: #388E3C;
+    margin: 20px 0;
+}
+
+/* Stats Group Styling */
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    font-size: 1.1em;
+}
+
+.stat-value {
+    font-weight: bold;
+    color: #03A9F4; /* Blue for stat numbers */
+}
+
+/* Stat Allocation Button */
+.allocate-btn {
+    background-color: #FFC107;
+    color: #121212;
     border: none;
-    padding: 2px 8px;
+    border-radius: 4px;
+    padding: 4px 8px;
     margin-left: 10px;
     cursor: pointer;
-    box-shadow: 0 0 5px var(--neon-red);
+    font-size: 0.8em;
+    font-weight: bold;
+    transition: background-color 0.2s;
 }
 
-/* PROGRESS BAR */
-.progress-bar-container {
-    background-color: #ffffff1a;
-    border: 1px solid var(--neon-blue);
-    height: 15px;
-    margin: 10px 0;
-    overflow: hidden;
+.allocate-btn:hover {
+    background-color: #FFEB3B;
 }
 
-#xp-bar {
-    height: 100%;
-    width: 0%; /* Controlled by JS */
-    background-color: var(--neon-red);
-    transition: width 0.5s ease-out;
+/* Quest and Button Styling */
+#quest-list {
+    list-style-type: none;
+    padding-left: 0;
 }
 
-/* BUTTONS */
-button {
-    background-color: var(--neon-blue);
-    color: #1a1a2e;
+#quest-list li {
+    background-color: rgba(76, 175, 80, 0.1);
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    border-left: 5px solid #4CAF50;
+}
+
+#complete-quest-btn {
+    background-color: #E91E63; /* Pink for action */
+    color: white;
     border: none;
-    padding: 10px 15px;
-    margin-top: 10px;
+    padding: 12px 25px;
     cursor: pointer;
     font-weight: bold;
-    box-shadow: 0 0 10px var(--neon-blue);
-    transition: all 0.2s;
+    margin-top: 20px;
+    border-radius: 5px;
+    transition: background-color 0.2s;
 }
 
-button:hover {
-    background-color: white;
-    box-shadow: 0 0 15px white;
+#complete-quest-btn:hover {
+    background-color: #C2185B;
 }
 
-.voice-btn {
-    background-color: var(--neon-red);
-    box-shadow: 0 0 10px var(--neon-red);
-}
-.voice-btn:hover {
-    background-color: #ff55aa;
-}
-.commands-list {
-    font-size: 0.9em;
-    border: 1px dashed #00ffff50;
-    padding: 10px;
+#message {
     margin-top: 15px;
+    font-size: 1.1em;
+    color: #03A9F4;
+}
+
+/* Stat Points Available */
+#stat-points-display {
+    color: #E91E63; 
+    font-weight: bold;
+    font-size: 1.2em;
 }

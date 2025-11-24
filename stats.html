@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monarch Training System - Dashboard</title>
+    <title>Monarch Training System - Stats</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Header Navigation -->
     <header>
         <div class="nav-container">
             <h1 class="title">MONARCH TRAINING SYSTEM</h1>
             <nav>
                 <ul>
-                    <li><a href="index.html" class="active">Dashboard</a></li>
-                    <li><a href="stats.html">Stats</a></li>
+                    <li><a href="index.html">Dashboard</a></li>
+                    <li><a href="stats.html" class="active">Stats</a></li>
                     <li><a href="exercises.html">Exercises</a></li>
                     <li><a href="workout.html">Workout</a></li>
                     <li><a href="settings.html">Settings</a></li>
@@ -23,6 +24,7 @@
         </div>
     </header>
 
+    <!-- Sound System -->
     <audio id="bgm" src="sources/solo.mp3" loop></audio>
     <audio id="clickSound" src="sources/click sound.wav"></audio>
     <audio id="levelUpSound" src="sources/levelup.mp3"></audio>
@@ -34,32 +36,18 @@
     </div>
 
     <main>
-        <!-- Avatar -->
+        <!-- Avatar Upload -->
         <section id="avatar-section">
-            <h2>Avatar</h2>
+            <h2>Avatar Upload</h2>
             <img id="current-avatar" src="sources/male-avatar.png" alt="Avatar">
-            <p>Click avatar to upload a new one</p>
+            <p>Click avatar to upload new image. Saved automatically!</p>
         </section>
 
-        <!-- XP / Level / Rank -->
-        <section id="xp-section">
-            <h2>Player Info</h2>
-            <p id="level-display">Level: 1</p>
-            <p id="xp-display">XP: 0</p>
-            <p id="rank-display">Rank: E</p>
-            <div id="xp-bar-container">
-                <div id="xp-bar"></div>
-            </div>
-        </section>
-
-        <!-- Daily Quests -->
-        <section id="daily-quests">
-            <h2>Daily Quests</h2>
-            <ul id="quest-list"></ul>
-            <div id="quests-progress-container">
-                <div id="quests-progress-bar"></div>
-            </div>
-            <button id="reset-quests">Reset Quests</button>
+        <!-- Stats Panel -->
+        <section id="stats-panel-section">
+            <h2>Player Stats</h2>
+            <div id="stats-panel"></div>
+            <button id="increase-stats">Increase Stats (+1)</button>
         </section>
     </main>
 
@@ -69,9 +57,18 @@
 
     <script src="script.js"></script>
     <script>
-        renderQuests();
-        updateQuestsProgress();
-        updateXPUI();
+        // Increase stats button
+        const increaseBtn = document.getElementById("increase-stats");
+        increaseBtn?.addEventListener("click", ()=>{
+            stats.STR += 1;
+            stats.AGI += 1;
+            stats.VIT += 1;
+            stats.INT += 1;
+            saveToStorage("stats", stats);
+            renderStats();
+            playClick();
+        });
+        renderStats();
     </script>
 </body>
 </html>

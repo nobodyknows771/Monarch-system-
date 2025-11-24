@@ -1,130 +1,248 @@
 /* ==========================
-      SOUND SYSTEM
+   Monarch Training System - Script.js
+   Solo Leveling Theme
 =========================== */
 
+/* --------------------------
+   SOUND SYSTEM
+--------------------------- */
 const bgm = document.getElementById("bgm");
 const clickSound = document.getElementById("clickSound");
 const levelUpSound = document.getElementById("levelUpSound");
+const questSound = document.getElementById("questSound");
 
 let sfxEnabled = true;
 let bgmEnabled = false;
 
-document.getElementById("toggleBGM").onclick = () => {
+// Sound controls
+const toggleBGMBtn = document.getElementById("toggleBGM");
+const toggleSFXBtn = document.getElementById("toggleSFX");
+
+toggleBGMBtn?.addEventListener("click", () => {
     bgmEnabled = !bgmEnabled;
-    bgmEnabled ? bgm.play() : bgm.pause();
-};
+    if (bgmEnabled) bgm.play();
+    else bgm.pause();
+    playClick();
+});
 
-document.getElementById("toggleSFX").onclick = () => {
+toggleSFXBtn?.addEventListener("click", () => {
     sfxEnabled = !sfxEnabled;
-};
+    playClick();
+});
 
-function playClick() {
-    if (sfxEnabled) clickSound.play();
+function playClick() { if(sfxEnabled) clickSound.play(); }
+function playQuestSound() {
+    if(sfxEnabled) {
+        bgm.pause();
+        questSound.play();
+        questSound.onended = () => { if(bgmEnabled) bgm.play(); }
+    }
+}
+function playLevelUp() { if(sfxEnabled) levelUpSound.play(); }
+
+/* --------------------------
+   LOCAL STORAGE UTILITIES
+--------------------------- */
+function saveToStorage(key, value) { localStorage.setItem(key, JSON.stringify(value)); }
+function loadFromStorage(key, defaultValue) {
+    const item = localStorage.getItem(key);
+    return item ? JSON.parse(item) : defaultValue;
 }
 
-/* ==========================
-      AVATAR SWITCHING
-=========================== */
-const avatar = document.getElementById("current-avatar");
-document.getElementById("switch-avatar").onclick = () => {
-    playClick();
-    avatar.src = avatar.src.includes("male-avatar") ?
-        "sources/female-avatar.png" :
-        "sources/male-avatar.png";
-};
+/* --------------------------
+   AVATAR UPLOAD
+--------------------------- */
+const avatarInput = document.createElement("input");
+avatarInput.type = "file";
+avatarInput.accept = "image/*";
 
-/* ==========================
-      DAILY QUESTS SYSTEM
-=========================== */
+const currentAvatar = document.getElementById("current-avatar");
 
-const quests = [
-    "Do 30 push-ups",
-    "Run for 10 minutes",
-    "Hold plank for 1 minute",
-    "20 Squats",
-    "Drink 1 liter of water"
-];
+currentAvatar?.addEventListener("click", () => {
+    avatarInput.click();
+});
 
-let xp = localStorage.getItem("xp") ? Number(localStorage.getItem("xp")) : 0;
-document.getElementById("xp-display").textContent = `XP: ${xp}`;
+avatarInput.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if(file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+            currentAvatar.src = reader.result;
+            saveToStorage("userAvatar", reader.result);
+            playClick();
+        };
+        reader.readAsDataURL(file);
+    }
+});
 
-function loadQuests() {
-    const list = document.getElementById("quest-list");
-    list.innerHTML = "";
+// Load saved avatar
+const savedAvatar = loadFromStorage("userAvatar", null);
+if(savedAvatar && currentAvatar) currentAvatar.src = savedAvatar;
 
-    quests.forEach((quest, index) => {
+/* --------------------------
+   XP / LEVEL / RANK SYSTEM
+--------------------------- */
+let xp = loadFromStorage("xp", 0);
+let level = loadFromStorage("level", 1);
+let stats = loadFromStorage("stats", {STR:5, AGI:5, VIT:5, INT:5});
+
+const levelDisplay = document.getElementById("level-display");
+const xpDisplay = document.getElementById("xp-display");
+const rankDisplay = document.getElementById("rank-display");
+
+function calculateRank(lvl) {
+    if(lvl >= 100) return "National";
+    if(lvl >= 80) return "S";
+    if(lvl >= 60) return "A";
+    if(lvl >= 40) return "B";
+    if(lvl >= 20) return "C";
+    if(lvl >= 10) return "D";
+    return "E";
+}
+
+function updateXPUI() {
+    levelDisplay && (levelDisplay.textContent = `Level: ${level}`);
+    xpDisplay && (xpDisplay.textContent = `XP: ${xp}`);
+    rankDisplay && (rankDisplay.textContent = `Rank: ${calculateRank(level)}`);
+}
+
+function gainXP(amount){
+    xp += amount;
+    while(xp >= level * 100){
+        xp -= level * 100;
+        level += 1;
+        playLevelUp();
+        alert(`Level Up! You are now level ${level}!`);
+    }
+    saveToStorage("xp", xp);
+    saveToStorage("level", level);
+    updateXPUI();
+}
+
+updateXPUI();
+
+/* --------------------------
+   DAILY QUESTS
+--------------------------- */
+const quests = loadFromStorage("quests", [
+    {desc:"Do 30 push-ups", done:false, xp:50},
+    {desc:"Run 10 minutes", done:false, xp:50},
+    {desc:"Plank 1 min", done:false, xp:50},
+    {desc:"20 squats", done:false, xp:50},
+    {desc:"Drink 1 liter water", done:false, xp:50}
+]);
+
+const questList = document.getElementById("quest-list");
+const resetQuestsBtn = document.getElementById("reset-quests");
+
+function renderQuests(){
+    if(!questList) return;
+    questList.innerHTML = "";
+    quests.forEach((q,i)=>{
         const li = document.createElement("li");
         li.innerHTML = `
-            <span>${quest}</span>
-            <button data-id="${index}">Complete</button>
+            <span>${q.desc}</span>
+            <button data-index="${i}">${q.done ? "✔" : "Complete"}</button>
         `;
-        list.appendChild(li);
+        if(q.done) li.classList.add("completed");
+        questList.appendChild(li);
     });
 }
 
-document.getElementById("quest-list").onclick = (e) => {
-    if (e.target.tagName === "BUTTON") {
-        playClick();
-        const li = e.target.parentElement;
-
-        if (!li.classList.contains("completed")) {
-            li.classList.add("completed");
-            xp += 50;
-            localStorage.setItem("xp", xp);
-            document.getElementById("xp-display").textContent = `XP: ${xp}`;
-            levelUpSound.play();
+questList?.addEventListener("click", e=>{
+    if(e.target.tagName==="BUTTON"){
+        const idx = e.target.dataset.index;
+        if(!quests[idx].done){
+            quests[idx].done = true;
+            gainXP(quests[idx].xp);
+            playQuestSound();
+            saveToStorage("quests", quests);
+            renderQuests();
         }
+        playClick();
     }
-};
+});
 
-document.getElementById("reset-quests").onclick = () => {
+resetQuestsBtn?.addEventListener("click", ()=>{
+    quests.forEach(q=>q.done=false);
+    saveToStorage("quests", quests);
+    renderQuests();
     playClick();
-    loadQuests();
-};
+});
 
-loadQuests();
+renderQuests();
 
-/* ==========================
-      EXERCISE API FETCH
-=========================== */
-
-const exerciseContainer = document.getElementById("exercise-container");
+/* --------------------------
+   EXERCISE LIBRARY
+--------------------------- */
 const muscleSelect = document.getElementById("muscle-select");
+const exerciseContainer = document.getElementById("exercise-container");
 
-async function fetchExercises(muscle) {
+// Fallback exercises (open source GIFs)
+const fallbackExercises = [
+    {name:"Push-Up", gifUrl:"https://raw.githubusercontent.com/ArseniyKhodakov/exercise-gifs/main/pushup.gif", equipment:"Bodyweight"},
+    {name:"Squat", gifUrl:"https://raw.githubusercontent.com/ArseniyKhodakov/exercise-gifs/main/squat.gif", equipment:"Bodyweight"},
+    {name:"Plank", gifUrl:"https://raw.githubusercontent.com/ArseniyKhodakov/exercise-gifs/main/plank.gif", equipment:"Bodyweight"},
+    {name:"Bicep Curl", gifUrl:"https://raw.githubusercontent.com/ArseniyKhodakov/exercise-gifs/main/bicep.gif", equipment:"Dumbbell"},
+];
+
+// Fetch exercises from ExerciseDB API
+async function fetchExercises(target="chest"){
+    if(!exerciseContainer) return;
     exerciseContainer.innerHTML = "<p>Loading...</p>";
 
-    const res = await fetch(
-        `https://exercisedb.p.rapidapi.com/exercises/target/${muscle}`,
-        {
-            headers: {
-                "x-rapidapi-key": "902379b81fmsh4338521f512f41bp1d8813jsnf077dc7ae54a",
-                "x-rapidapi-host": "exercisedb.p.rapidapi.com"
+    try{
+        const res = await fetch(`https://exercisedb.p.rapidapi.com/exercises/target/${target}`, {
+            headers:{
+                "x-rapidapi-key":"902379b81fmsh4338521f512f41bp1d8813jsnf077dc7ae54a",
+                "x-rapidapi-host":"exercisedb.p.rapidapi.com"
             }
-        }
-    );
+        });
+        if(!res.ok) throw new Error("API error");
+        const data = await res.json();
+        renderExercises(data.slice(0,12));
+    }catch(err){
+        console.warn("Using fallback exercises", err);
+        renderExercises(fallbackExercises);
+    }
+}
 
-    const data = await res.json();
+function renderExercises(list){
+    if(!exerciseContainer) return;
     exerciseContainer.innerHTML = "";
-
-    data.slice(0, 12).forEach(ex => {
+    list.forEach(ex=>{
         const card = document.createElement("div");
         card.className = "exercise-card";
-
         card.innerHTML = `
             <h3>${ex.name.toUpperCase()}</h3>
-            <img src="${ex.gifUrl}" alt="${ex.name}" />
+            <img src="${ex.gifUrl}" alt="${ex.name}">
             <p><strong>Equipment:</strong> ${ex.equipment}</p>
         `;
-
         exerciseContainer.appendChild(card);
     });
 }
 
-muscleSelect.addEventListener("change", () => {
-    playClick();
+muscleSelect?.addEventListener("change", ()=>{
     fetchExercises(muscleSelect.value);
+    playClick();
 });
 
-// Load default
-fetchExercises("chest");
+// Load default muscle
+if(muscleSelect) fetchExercises(muscleSelect.value || "chest");
+
+/* --------------------------
+   STATS PANEL (Optional page: stats.html)
+--------------------------- */
+function renderStats(){
+    const statsDiv = document.getElementById("stats-panel");
+    if(!statsDiv) return;
+    statsDiv.innerHTML = "";
+    Object.keys(stats).forEach(key=>{
+        const stat = document.createElement("div");
+        stat.className="stat";
+        stat.innerHTML = `<strong>${key}:</strong> ${stats[key]}`;
+        statsDiv.appendChild(stat);
+    });
+}
+
+renderStats();

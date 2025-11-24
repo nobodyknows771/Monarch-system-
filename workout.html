@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monarch Training System - Workout</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header Navigation -->
+    <header>
+        <div class="nav-container">
+            <h1 class="title">MONARCH TRAINING SYSTEM</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Dashboard</a></li>
+                    <li><a href="stats.html">Stats</a></li>
+                    <li><a href="exercises.html">Exercises</a></li>
+                    <li><a href="workout.html" class="active">Workout</a></li>
+                    <li><a href="settings.html">Settings</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Sound System -->
+    <audio id="bgm" src="sources/solo.mp3" loop></audio>
+    <audio id="clickSound" src="sources/click sound.wav"></audio>
+    <audio id="levelUpSound" src="sources/levelup.mp3"></audio>
+    <audio id="questSound" src="sources/ashborn.mp3"></audio>
+
+    <div id="sound-controls">
+        <button id="toggleBGM">🔊 BGM</button>
+        <button id="toggleSFX">🎧 SFX</button>
+    </div>
+
+    <main>
+        <section id="workout-section">
+            <h2>Workout Mode</h2>
+            <div id="current-exercise">
+                <p><strong>Exercise:</strong> <span id="exercise-name">Push-Ups</span></p>
+                <p><strong>Reps:</strong> <span id="exercise-reps">15</span></p>
+                <p><strong>Time Left:</strong> <span id="timer">00:30</span></p>
+            </div>
+            <div id="workout-controls">
+                <button id="start-workout">Start</button>
+                <button id="pause-workout">Pause</button>
+                <button id="reset-workout">Reset</button>
+            </div>
+            <div id="workout-progress">
+                <p>XP Gained: <span id="workout-xp">0</span></p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Monarch Training System &copy; 2025 | Solo Leveling Themed</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        let workoutTime = 30; // seconds
+        let workoutInterval = null;
+        let currentXP = 0;
+
+        const timerEl = document.getElementById("timer");
+        const xpEl = document.getElementById("workout-xp");
+        const startBtn = document.getElementById("start-workout");
+        const pauseBtn = document.getElementById("pause-workout");
+        const resetBtn = document.getElementById("reset-workout");
+
+        function updateTimerUI() {
+            const min = String(Math.floor(workoutTime/60)).padStart(2,'0');
+            const sec = String(workoutTime%60).padStart(2,'0');
+            if(timerEl) timerEl.textContent = `${min}:${sec}`;
+        }
+
+        function startWorkout() {
+            if(workoutInterval) return;
+            playQuestSound();
+            workoutInterval = setInterval(()=>{
+                if(workoutTime > 0){
+                    workoutTime--;
+                    updateTimerUI();
+                } else {
+                    clearInterval(workoutInterval);
+                    workoutInterval = null;
+                    alert("Workout Complete! XP Gained: 50");
+                    gainXP(50);
+                    currentXP += 50;
+                    if(xpEl) xpEl.textContent = currentXP;
+                }
+            },1000);
+        }
+
+        function pauseWorkout(){
+            if(workoutInterval){
+                clearInterval(workoutInterval);
+                workoutInterval = null;
+            }
+        }
+
+        function resetWorkout(){
+            pauseWorkout();
+            workoutTime = 30;
+            currentXP = 0;
+            updateTimerUI();
+            if(xpEl) xpEl.textContent = currentXP;
+        }
+
+        startBtn?.addEventListener("click", ()=>{
+            startWorkout();
+            playClick();
+        });
+        pauseBtn?.addEventListener("click", ()=>{
+            pauseWorkout();
+            playClick();
+        });
+        resetBtn?.addEventListener("click", ()=>{
+            resetWorkout();
+            playClick();
+        });
+
+        // Initialize UI
+        updateTimerUI();
+        if(xpEl) xpEl.textContent = currentXP;
+    </script>
+</body>
+</html>

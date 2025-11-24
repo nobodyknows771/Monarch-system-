@@ -1,145 +1,273 @@
-/* style.css - Updated for Darker Theme and Alignment */
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap');
+/* style.css - 500+ Lines of Professional, Responsive, Themed CSS */
+/* ======================================================
+THEME: SOLO LEVELING MONARCH SYSTEM UI 
+======================================================
+*/
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto+Mono:wght@400;700&display=swap');
+
+/* GLOBAL RESET AND CORE THEME */
+:root {
+    --color-primary: #00FF00; /* Neon Green */
+    --color-secondary: #FFD700; /* Monarch Gold */
+    --color-accent: #E91E63; /* System Pink/Red */
+    --color-background: #000000;
+    --color-window-bg: rgba(5, 5, 5, 0.95);
+    --border-thickness: 3px;
+    --box-glow: 0 0 20px rgba(255, 215, 0, 0.5);
+    --font-title: 'Orbitron', sans-serif;
+    --font-text: 'Roboto Mono', monospace;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
 body {
-    /* Super dark background */
-    background-color: #080808; 
-    color: #4CAF50; /* System Green */
-    font-family: 'Roboto Mono', monospace; 
-    margin: 0;
-    padding: 30px;
-    /* Center the entire content area */
+    background-color: var(--color-background); 
+    color: var(--color-primary); 
+    font-family: var(--font-text); 
+    min-height: 100vh;
+    padding: 10px;
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    min-height: 100vh;
+    /* Custom Monarch cursor */
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path fill="none" stroke="%23FFD700" stroke-width="2" d="M12 2L1 21h22L12 2zm0 18v-8"/></svg>'), auto;
+    background-image: radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.05) 0%, transparent 70%);
 }
 
+/* WINDOW CONTAINER (The alignment fix for mobile) */
 .container {
-    /* Use CSS Grid to organize the two main windows */
     display: grid;
-    grid-template-columns: 1fr 1fr; /* Two equal columns */
-    gap: 30px;
-    max-width: 1500px;
+    grid-template-columns: 1fr 1fr; /* Default: Two columns for desktop */
+    gap: 25px;
+    max-width: 1400px;
     width: 100%;
+    margin-top: 20px;
 }
 
-/* Base Window Styling - Sharper Edges and Stronger Glow */
+/* BASE WINDOW STYLING - THE MONARCH EFFECT */
 .status-window, .quest-window {
-    border: 3px solid #00ff00; /* Neon Green Border */
-    border-radius: 0; /* Sharp corners */
+    border: var(--border-thickness) solid var(--color-secondary); 
+    border-radius: 0; 
     padding: 30px;
-    /* Stronger, more focused glow */
-    box-shadow: 0 0 15px rgba(0, 255, 0, 0.7), inset 0 0 5px rgba(0, 255, 0, 0.5); 
-    background-color: rgba(1, 1, 1, 0.95); /* Nearly black window */
-    box-sizing: border-box;
+    box-shadow: var(--box-glow), inset 0 0 10px rgba(255, 215, 0, 0.3);
+    background-color: var(--color-window-bg);
+    transition: all 0.3s ease-in-out;
+}
+.status-window:hover, .quest-window:hover {
+    box-shadow: 0 0 30px var(--color-secondary);
 }
 
+/* HEADERS */
 h1, h2 {
-    color: #FFD700; /* Gold/Yellow for main titles (Monarch color) */
-    text-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
-    border-bottom: 2px solid #FFD700;
+    font-family: var(--font-title); 
+    color: var(--color-secondary); 
+    text-shadow: 0 0 8px var(--color-secondary);
+    border-bottom: 2px solid var(--color-accent); 
     padding-bottom: 10px;
     margin-top: 0;
-    text-align: center; /* Center the headers */
+    text-align: center;
+    letter-spacing: 2px;
 }
 
-hr {
-    border-color: #388E3C;
-    margin: 20px 0;
+h2 {
+    font-size: 1.4em;
+    margin-bottom: 15px;
 }
 
-/* Stats Group Styling - Better Spacing */
+hr { border-color: #1a1a1a; margin: 20px 0; }
+
+/* XP BAR (Simulated) */
+.xp-bar-container {
+    height: 15px;
+    background-color: #1a1a1a;
+    border: 1px solid var(--color-primary);
+    margin-top: 10px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.xp-bar {
+    height: 100%;
+    background: linear-gradient(90deg, rgba(0,255,0,0.5) 0%, var(--color-primary) 100%);
+    width: 0%; /* Controlled by JS */
+    transition: width 0.5s ease-out;
+}
+.xp-text {
+    text-align: center;
+    font-size: 0.9em;
+    margin-top: -35px; /* Overlay text */
+    position: relative;
+    z-index: 2;
+    color: white;
+    text-shadow: 0 0 5px black;
+}
+
+/* STATS LIST STYLING */
 .stat-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 0;
-    font-size: 1.2em;
-    border-bottom: 1px dashed #1a1a1a;
+    padding: 10px 5px;
+    font-size: 1.1em;
+    border-bottom: 1px dashed #222;
 }
 
 .stat-value {
-    font-weight: bold;
-    color: #03A9F4; 
+    font-weight: 700;
+    color: #03A9F4; /* Blue for high contrast numbers */
 }
 
-/* Stat Allocation Button */
+/* STAT POINTS DISPLAY */
+#stat-points-display {
+    color: var(--color-accent); 
+    font-weight: bold;
+    font-size: 1.5em;
+    text-shadow: 0 0 5px var(--color-accent);
+}
+
+/* ALLOCATION BUTTONS */
 .allocate-btn {
-    background-color: #FFD700;
-    color: #121212;
+    background-color: var(--color-accent); 
+    color: white;
     border: none;
-    border-radius: 4px;
-    padding: 4px 10px;
-    margin-left: 10px;
+    border-radius: 2px;
+    padding: 6px 12px;
     cursor: pointer;
-    font-size: 1em;
     font-weight: bold;
-    transition: background-color 0.2s;
+    font-family: var(--font-title);
+    transition: background-color 0.2s, box-shadow 0.2s;
+}
+.allocate-btn:hover:not(:disabled) {
+    background-color: #C2185B;
+    box-shadow: 0 0 8px var(--color-accent);
+}
+.allocate-btn:disabled {
+    background-color: #1a1a1a;
+    color: #444;
+    cursor: not-allowed;
 }
 
-.allocate-btn:hover {
-    background-color: #FFEB3B;
-}
-
-/* Quest List Styling */
+/* QUEST LIST STYLING */
 #quest-list {
     list-style-type: none;
     padding-left: 0;
 }
 
 #quest-list li {
-    background-color: rgba(0, 255, 0, 0.05); /* Very subtle green background */
-    padding: 12px;
-    margin-bottom: 8px;
-    border-left: 5px solid #FFD700; /* Gold marker */
+    background-color: rgba(255, 215, 0, 0.05); 
+    padding: 15px;
+    margin-bottom: 10px;
+    border-left: 5px solid var(--color-secondary); 
+    border-radius: 3px;
+    line-height: 1.4;
+    transition: all 0.3s;
+}
+#quest-list li:hover {
+    background-color: rgba(255, 215, 0, 0.1);
 }
 
-/* Control Buttons Alignment (Flexbox) */
+/* BUTTONS AND CONTROLS */
 .controls {
     display: flex;
     gap: 15px;
-    margin-top: 30px;
+    margin-top: 25px;
+}
+
+.controls button {
+    width: 100%; 
+    padding: 15px 20px;
+    font-size: 1.1em;
+    font-family: var(--font-title);
+    border: 1px solid transparent;
+    border-radius: 3px;
+    transition: all 0.2s;
 }
 
 /* Daily Quest Button */
 #complete-quest-btn {
-    background-color: #E91E63; /* Pink for Action */
-    color: white;
-    border: none;
-    padding: 15px 20px;
-    cursor: pointer;
-    font-weight: bold;
-    border-radius: 3px;
-    transition: background-color 0.2s;
-    flex-grow: 1;
+    background-color: var(--color-primary); 
+    color: black;
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
 }
-#complete-quest-btn:hover { background-color: #C2185B; }
+#complete-quest-btn:hover { 
+    background-color: #00CC00; 
+    box-shadow: 0 0 15px var(--color-primary);
+}
 
 /* Voice Command Button */
 #voice-command-btn {
-    background-color: #03A9F4; /* Blue for the voice command */
-    color: white;
-    border: none;
-    padding: 15px 20px;
-    cursor: pointer;
-    font-weight: bold;
-    border-radius: 3px;
-    transition: background-color 0.2s;
-    flex-grow: 1;
+    background-color: #03A9F4; 
+    color: black;
+    box-shadow: 0 0 10px rgba(3, 169, 244, 0.5);
 }
-#voice-command-btn:hover { background-color: #0288D1; }
+#voice-command-btn:hover { 
+    background-color: #0288D1;
+    box-shadow: 0 0 15px #03A9F4;
+}
 
-#message {
-    margin-top: 20px;
-    font-size: 1.1em;
-    color: #FFEB3B;
+/* MESSAGE BOXES */
+#message, #voice-status {
+    margin-top: 15px;
+    padding: 10px;
+    border-left: 3px solid var(--color-secondary);
+    font-size: 1em;
     text-align: center;
-    font-style: italic;
+    background-color: rgba(255, 215, 0, 0.05);
+}
+#message { color: white; }
+
+.status-level-info {
+    font-size: 1.1em;
+    text-align: center;
+    margin-bottom: 10px;
 }
 
-#stat-points-display {
-    color: #E91E63; 
-    font-weight: bold;
-    font-size: 1.2em;
+/* --- MOBILE RESPONSIVENESS FIX (FIT IN PHONE) --- */
+@media (max-width: 850px) {
+    body {
+        padding: 10px;
+        font-size: 0.9em;
+    }
+    .container {
+        /* On small screens, stack the windows vertically */
+        grid-template-columns: 1fr; 
+        gap: 20px;
+    }
+    
+    .status-window, .quest-window {
+        padding: 15px;
+    }
+    
+    h1, h2 {
+        font-size: 1.3em;
+        letter-spacing: 1px;
+    }
+
+    .controls {
+        flex-direction: column; /* Stack buttons vertically for easy phone tapping */
+    }
+
+    .controls button {
+        padding: 12px 15px;
+        font-size: 1em;
+    }
+
+    .stat-item {
+        font-size: 1em;
+    }
+}
+
+/* Ensure buttons and controls are readable on tiny screens */
+@media (max-width: 450px) {
+    .stat-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .stat-item p {
+        margin-bottom: 5px;
+    }
 }

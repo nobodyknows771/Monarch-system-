@@ -3,34 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Monarch System | Only I Level Up</title>
+  <title>MONARCH SYSTEM | ARISE</title>
   <link rel="stylesheet" href="style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Rajdhani:wght@600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&family=Creepster&display=swap" rel="stylesheet">
+  <link rel="icon" href="sources/male-avatar.png">
 </head>
 <body>
-  <audio id="bgm" loop>
+  <!-- AUDIO -->
+  <audio id="bgm" loop volume="0.4">
     <source src="sources/solo.mp3" type="audio/mpeg">
   </audio>
-  <audio id="clickSfx">
-    <source src="sources/click sound.wav" type="audio/wav">
-  </audio>
-  <audio id="levelUpSfx">
-    <source src="sources/levelup.mp3" type="audio/mpeg">
-  </audio>
-  <audio id="ashbornVoice">
-    <source src="sources/ashborn.mp3" type="audio/mpeg">
-  </audio>
+  <audio id="clickSfx"><source src="sources/click sound.wav" type="audio/wav"></audio>
+  <audio id="levelUpSfx"><source src="sources/levelup.mp3" type="audio/mpeg"></audio>
+  <audio id="ashbornVoice"><source src="sources/ashborn.mp3" type="audio/mpeg"></audio>
+  <audio id="gateOpen"><source src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3" type="audio/mpeg"></audio>
+  <audio id="shadowExtract"><source src="https://assets.mixkit.co/sfx/preview/mixkit-evil-laugh-2024.mp3" type="audio/mpeg"></audio>
 
   <div class="container" id="app">
-    <!-- Settings -->
+    <!-- SETTINGS -->
     <div class="settings-bar">
       <button id="muteBgm">BGM: ON</button>
       <button id="muteSfx">SFX: ON</button>
+      <button id="resetData">RESET ALL</button>
     </div>
 
-    <!-- Gender Select -->
+    <!-- GENDER SELECT -->
     <div id="genderSelect" class="screen">
-      <h1 class="title">THE SYSTEM HAS AWAKENED</h1>
+      <h1 class="title pulse">THE SYSTEM HAS AWAKENED</h1>
       <p class="subtitle">Choose your vessel, Hunter</p>
       <div class="gender-grid">
         <div class="gender-card" data-gender="male">
@@ -44,13 +43,13 @@
       </div>
     </div>
 
-    <!-- Main Screen -->
+    <!-- MAIN SCREEN -->
     <div id="mainScreen" class="screen hidden">
       <div class="header">
         <div class="player-info">
           <img id="playerAvatar" src="" alt="Avatar" class="avatar">
           <div>
-            <h2 id="playerName">Shadow Monarch</h2>
+            <h2 id="playerName">Sung Jin-Woo</h2>
             <p>Rank: <span id="playerRank">E-Rank</span> | Level <span id="playerLevel">1</span></p>
             <p>EXP <span id="playerExp">0</span>/<span id="expToNext">100</span></p>
             <div class="exp-bar"><div id="expFill"></div></div>
@@ -59,17 +58,30 @@
         </div>
       </div>
 
-      <!-- Weekly Boss Raid Banner -->
+      <!-- WEEKLY BOSS RAID -->
       <div id="bossRaidBanner" class="boss-raid hidden">
         <h2>RED GATE OPENED! BOSS: BERU</h2>
-        <button id="fightBoss" class="big-btn boss-btn">FIGHT THE ANT KING (10x EXP)</button>
+        <p class="boss-desc">The Ant King has descended!</p>
+        <button id="fightBoss" class="big-btn boss-btn">EXTERMINATE THE ANT KING (10x EXP)</button>
       </div>
 
-      <!-- Daily Quest -->
+      <!-- DAILY QUEST -->
       <div class="daily-quest">
         <h2>DAILY QUEST: <span id="questTitle">Become Stronger to Survive</span></h2>
         <div id="questList"></div>
-        <button id="completeQuest" class="big-btn">CLAIM REWARD</button>
+        <button id="completeQuest" class="big-btn" disabled>CLAIM REWARD</button>
+      </div>
+
+      <!-- GATE SYSTEM -->
+      <div class="gate-system">
+        <h2>AVAILABLE GATES</h2>
+        <div id="gateList"></div>
+      </div>
+
+      <!-- INVENTORY -->
+      <div class="inventory">
+        <h2>SHADOW INVENTORY</h2>
+        <div id="shadowInventory"></div>
       </div>
 
       <div class="status">
@@ -78,18 +90,26 @@
       </div>
     </div>
 
-    <!-- Level Up Popup -->
+    <!-- POPUPS -->
     <div id="levelUpPopup" class="popup hidden">
       <h1>LEVEL UP!</h1>
       <p>You have grown stronger...</p>
     </div>
 
-    <!-- Ashborn Awakening (Level 50) -->
     <div id="ashbornAwaken" class="popup hidden">
       <h1>ARISE.</h1>
-      <p style="font-size:2rem; margin-top:20px;">I am... the Shadow Monarch.</p>
+      <p class="ashborn-text">I am... the Shadow Monarch.</p>
+      <p class="ashborn-text delay">You are no longer human.</p>
+    </div>
+
+    <div id="shadowExtractPopup" class="popup hidden">
+      <h1>SHADOW EXTRACTION SUCCESSFUL</h1>
+      <p id="extractedName">Beru has risen as your shadow!</p>
     </div>
   </div>
+
+  <!-- PARTICLES BACKGROUND -->
+  <div id="particles"></div>
 
   <script src="script.js"></script>
 </body>

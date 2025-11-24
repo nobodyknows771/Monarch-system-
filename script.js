@@ -1,263 +1,266 @@
-// --- 1. INITIAL PLAYER DATA & LOCAL STORAGE PERSISTENCE ---
+const bgm = document.getElementById('bgm');
+const clickSfx = document.getElementById('clickSfx');
+const levelUpSfx = document.getElementById('levelUpSfx');
+const ashbornVoice = document.getElementById('ashbornVoice');
 
-// Load data from Local Storage or use defaults
-let player = JSON.parse(localStorage.getItem('soloMonarchPlayer')) || {
-    level: 1,
-    xp: 0,
-    xpToLevelUp: 100,
-    statPoints: 0, 
-    str: 10,
-    sta: 10,
-    per: 10,
-    // Store completion status and protocol level
-    currentProtocol: 'LOW_CORE', 
-    questStatus: [
-        { name: "Push-ups (Low)", target: 50, isCompleted: false },
-        { name: "Squats (Low)", target: 50, isCompleted: false },
-        { name: "Plank Hold", target: "5 Minutes", isCompleted: false },
-        { name: "Cardio", target: "10 Minutes", isCompleted: false }
-    ],
-    lastActivityDate: new Date().toDateString() 
+let bgmOn = true, sfxOn = true;
+
+// Toggle sounds
+document.getElementById('muteBgm').onclick = () => {
+  bgmOn = !bgmOn;
+  bgmOn ? bgm.play() : bgm.pause();
+  document.getElementById('muteBgm').textContent = `BGM: ${bgmOn ? 'ON' : 'OFF'}`;
+  playClick();
 };
 
-// Reassign questStatus to dailyQuest for easier use
-let dailyQuest = player.questStatus;
+document.getElementById('muteSfx').onclick = () => {
+  sfxOn = !sfxOn;
+  document.getElementById('muteSfx').textContent = `SFX: ${sfxOn ? 'ON' : 'OFF'}`;
+  playClick();
+};
 
-// Function to save the current player state
-function savePlayerState() {
-    player.questStatus = dailyQuest;
-    localStorage.setItem('soloMonarchPlayer', JSON.stringify(player));
+function playClick() {
+  if (sfxOn) { clickSfx.currentTime = 0; clickSfx.play(); }
 }
 
-// --- 2. FITNESS PROTOCOL QUESTS (High-Core logic) ---
-const QUEST_PROTOCOLS = {
-    LOW_CORE: [
-        { name: "Push-ups (Low)", target: 50, isCompleted: false },
-        { name: "Squats (Low)", target: 50, isCompleted: false },
-        { name: "Plank Hold", target: "5 Minutes", isCompleted: false },
-        { name: "Cardio", target: "10 Minutes", isCompleted: false }
-    ],
-    HIGH_CORE: [
-        { name: "Push-ups (High)", target: 100, isCompleted: false },
-        { name: "Sit-ups (High)", target: 100, isCompleted: false },
-        { name: "Squats (High)", target: 100, isCompleted: false },
-        { name: "Run", target: "1 Mile", isCompleted: false }
-    ]
+// Auto-play BGM on first interaction
+document.body.addEventListener('click', () => {
+  if (bgmOn && bgm.paused) bgm.play();
+}, { once: true });
+
+// Player System
+let player = {
+  gender: localStorage.getItem('gender') || null,
+  level: parseInt(localStorage.getItem('level')) || 1,
+  exp: parseInt(localStorage.getItem('exp')) || 0,
+  expToNext: parseInt(localStorage.getItem('expToNext')) || 100,
+  lastReset: localStorage.getItem('lastReset') || null,
+  lastBossDefeated: localStorage.getItem('lastBoss') || null,
+  completedToday: false,
+  isMonarch: localStorage.getItem('isMonarch') === 'true'
 };
 
-// --- 3. CORE RENDERING AND UI UPDATES ---
+function savePlayer() {
+  localStorage.setItem('gender', player.gender);
+  localStorage.setItem('level', player.level);
+  localStorage.setItem('exp', player.exp);
+  localStorage.setItem('expToNext', player.expToNext);
+  localStorage.setItem('lastReset', player.lastReset);
+  localStorage.setItem('lastBoss', player.lastBossDefeated);
+  localStorage.setItem('isMonarch', player.isMonarch);
+}
 
-function renderStatus() {
-    // Renders all current player data to the HTML
-    const xpPercentage = (player.xp / player.xpToLevelUp) * 100;
+// ExerciseDB API
+async function fetchBodyweightExercises() {
+  const exercises = [
+    "push-up", "pull-up", "squat", "lunge", "burpee", 
+    "mountain climber", "plank", "crunch", "dip", "jump squat"
+  ];
+  const randomExercises = exercises.sort(() => 0.5 - Math.random()).slice(0, 4);
 
-    document.getElementById('player-level').textContent = player.level;
-    document.getElementById('player-xp-current').textContent = player.xp;
-    document.getElementById('player-xp-max').textContent = player.xpToLevelUp;
-    document.getElementById('stat-points-display').textContent = player.statPoints;
-    
-    document.getElementById('stat-str').textContent = player.str;
-    document.getElementById('stat-sta').textContent = player.sta;
-    document.getElementById('stat-per').textContent = player.per;
-    document.getElementById('stat-hp').textContent = player.sta * 10; 
-    document.getElementById('protocol-level').textContent = player.currentProtocol;
-    
-    // Update XP Bar
-    document.getElementById('xp-progress-bar').style.width = `${xpPercentage}%`;
+  const promises = randomExercises.map(name =>
+    fetch(`https://exercisedb.p.rapidapi.com/exercises/name/${name}`, {
+      headers: {
+        'x-rapidapi-key': 'GET_YOUR_OWN_FREE_KEY_AT_https://rapidapi.com/justin-WFnsXH_t6/api/exercisedb', // Optional but better
+      }
+    }).then(r => r.json())
+  );
 
-    // Enable/Disable Allocation Buttons
-    document.querySelectorAll('.allocate-btn').forEach(btn => {
-        btn.disabled = player.statPoints === 0;
-    });
-    
-    savePlayerState();
+  // Fallback if API fails
+  const fallback = [
+    {name:"Push-ups",reps:100,gifUrl:"https://i.imgur.com/lnF5T.png"},
+    {name:"Air Squats",reps:100,gifUrl:"https://i.imgur.com/4p4q3.gif"},
+    {name:"Sit-ups",reps:100,gifUrl:"https://i.imgur.com/8r8d2.gif"},
+    {name:"Burpees",reps:50,gifUrl:"https://i.imgur.com/burpee.gif"}
+  ];
+
+  try {
+    const results = await Promise.all(promises);
+    return results.flat().filter(ex => ex.gifUrl).slice(0,4);
+  } catch (e) {
+    console.log("API down → using fallback");
+    return fallback;
+  }
+}
+
+let dailyQuests = [];
+
+// Daily Reset
+function checkDailyReset() {
+  const today = new Date().toDateString();
+  if (player.lastReset !== today) {
+    player.completedToday = false;
+    player.lastReset = today;
+    savePlayer();
+    loadDailyQuests();
+  }
+}
+
+// Weekly Boss (Every Sunday)
+function checkBossRaid() {
+  const day = new Date().getDay(); // 0 = Sunday
+  const last = player.lastBossDefeated;
+  const banner = document.getElementById('bossRaidBanner');
+
+  if (day === 0 && last !== new Date().toDateString()) {
+    banner.classList.remove('hidden');
+  } else {
+    banner.classList.add('hidden');
+  }
+}
+
+document.getElementById('fightBoss').onclick = () => {
+  playClick();
+  if (confirm("Defeat Beru and claim 10x EXP?")) {
+    const bonus = (250 + player.level * 50) * 10;
+    player.exp += bonus;
+    player.lastBossDefeated = new Date().toDateString();
+    savePlayer();
+    levelUpCheck();
+    updatePlayerUI();
+    alert(`BERU DEFEATED! +${bonus} EXP`);
+    document.getElementById('bossRaidBanner').classList.add('hidden');
+  }
+};
+
+// Load Daily Quests
+async function loadDailyQuests() {
+  const quests = await fetchBodyweightExercises();
+  dailyQuests = quests.map(ex => ({
+    name: ex.name || ex.name.toUpperCase(),
+    reps: Math.floor(Math.random() * 50) + 50,
+    gif: ex.gifUrl,
+    done: false
+  }));
+  renderQuests();
 }
 
 function renderQuests() {
-    const list = document.getElementById('quest-list');
-    list.innerHTML = ''; 
-
-    dailyQuest.forEach(quest => {
-        const status = quest.isCompleted ? '✅' : '❌';
-        const targetText = typeof quest.target === 'number' ? `${quest.target} Reps` : quest.target;
-        
-        const listItem = document.createElement('li');
-        listItem.textContent = `${status} ${quest.name}: ${targetText}`;
-        list.appendChild(listItem);
-    });
-}
-
-// --- 4. GAME MECHANICS (LEVEL UP, QUEST, PENALTY) ---
-
-function levelUp() {
-    player.level += 1;
-    player.xp = 0;
-    player.xpToLevelUp += 50; 
-    player.statPoints += 3; // Grant 3 points upon level up
-    
-    // Check if Protocol is unlocked
-    if (player.level >= 10 && player.currentProtocol === 'LOW_CORE') {
-        player.currentProtocol = 'HIGH_CORE';
-        document.getElementById('message').textContent = `[DING! LEVEL UP & PROTOCOL UPGRADE] Level ${player.level}! High-Core Fitness Protocol Unlocked!`;
-        // The quest will be reset to HIGH_CORE on the next day's check.
-    } else {
-        document.getElementById('message').textContent = `[DING! LEVEL UP] You are now Level ${player.level}! You gained 3 Stat Points!`;
-    }
-}
-
-
-function assignNewQuest(protocol) {
-    // Reset the quest using a deep copy of the assigned protocol
-    dailyQuest = JSON.parse(JSON.stringify(QUEST_PROTOCOLS[protocol]));
-    player.currentProtocol = protocol;
-    player.lastActivityDate = new Date().toDateString(); // Update the last active date
-    
-    renderQuests();
-    renderStatus();
-}
-
-function checkDailyReset() {
-    const today = new Date().toDateString();
-    
-    if (player.lastActivityDate !== today) {
-        // A new day has started since the last activity/save
-        
-        // 1. PENALTY CHECK
-        if (!dailyQuest.every(q => q.isCompleted)) {
-            // Quest was NOT completed yesterday
-            player.sta = Math.max(1, player.sta - 3); // Penalty: Lose 3 STA points
-            document.getElementById('message').textContent = `[CRITICAL PENALTY] Quest Failed Yesterday. Stamina -3. Begin New Quest.`;
-        } else {
-            document.getElementById('message').textContent = `[SYSTEM LOG] Yesterday's Quest Cleared. New Quest Assigned.`;
-        }
-        
-        // 2. ASSIGN NEW QUEST (Based on current protocol)
-        const protocol = player.level >= 10 ? 'HIGH_CORE' : 'LOW_CORE';
-        assignNewQuest(protocol);
-        
-    } else {
-        document.getElementById('message').textContent = 'System Ready. Complete your Daily Quest.';
-    }
-}
-
-
-function handleQuestCompletion() {
-    const messageDisplay = document.getElementById('message');
-    
-    if (dailyQuest.every(q => q.isCompleted)) {
-        messageDisplay.textContent = `[SYSTEM MESSAGE] Quest already finished today. Try again tomorrow.`;
-        return;
-    }
-    
-    // Complete the Quest
-    dailyQuest.forEach(q => q.isCompleted = true);
-    
-    // Reward: Gain XP (HIGH_CORE gives more XP)
-    const xpGained = player.currentProtocol === 'HIGH_CORE' ? 80 : 50;
-    player.xp += xpGained;
-    messageDisplay.textContent = `[QUEST SUCCESS] Daily Quest completed! +${xpGained} XP awarded.`;
-
-    // Check for Level Up
-    if (player.xp >= player.xpToLevelUp) {
-        levelUp();
-    }
-    
-    renderQuests();
-    renderStatus();
-}
-
-function handleStatAllocation(event) {
-    const stat = event.target.dataset.stat;
-    const messageDisplay = document.getElementById('message');
-
-    if (player.statPoints > 0) {
-        player[stat] += 1;
-        player.statPoints -= 1;
-        messageDisplay.textContent = `[SYSTEM] Allocated 1 point to ${stat.toUpperCase()}. Current ${stat.toUpperCase()}: ${player[stat]}.`;
-    } else {
-        messageDisplay.textContent = `[SYSTEM WARNING] Insufficient Stat Points. Complete Quests!`;
-    }
-    renderStatus();
-}
-
-// --- 5. VOICE COMMAND LOGIC ---
-const voiceStatus = document.getElementById('voice-status');
-
-function startSpeechRecognition() {
-    // Checks for compatibility (Chrome/Edge required for webkitSpeechRecognition)
-    if (!('webkitSpeechRecognition' in window)) {
-        voiceStatus.textContent = '[SYSTEM ERROR] Voice commands are not supported by your browser (Use Chrome/Edge).';
-        return;
-    }
-
-    const recognition = new webkitSpeechRecognition();
-    recognition.continuous = false; 
-    recognition.lang = 'en-US';
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-
-    recognition.onstart = () => {
-        voiceStatus.textContent = 'System Listening... Speak command now.';
-        document.getElementById('voice-command-btn').disabled = true;
+  const container = document.getElementById('questList');
+  container.innerHTML = '';
+  dailyQuests.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = `quest-item ${q.done ? 'completed' : ''}`;
+    div.innerHTML = `
+      <div>
+        <strong>${q.name}</strong> × ${q.reps}
+        <img src="${q.gif}" alt="${q.name}" class="exercise-gif" onerror="this.style.display='none'">
+      </div>
+      <input type="checkbox" class="quest-checkbox" ${q.done ? 'checked disabled' : ''}>
+    `;
+    div.querySelector('input').onchange = () => {
+      playClick();
+      q.done = true;
+      div.classList.add('completed');
+      if (dailyQuests.every(q => q.done)) {
+        document.getElementById('completeQuest').style.opacity = '1';
+        document.getElementById('completeQuest').style.pointerEvents = 'auto';
+      }
     };
-
-    recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript.toLowerCase();
-        voiceStatus.textContent = `System heard: "${transcript}"`;
-        handleVoiceCommand(transcript);
-    };
-
-    recognition.onerror = (event) => {
-        voiceStatus.textContent = `System Error: ${event.error}. Try saying "System [Command]".`;
-        document.getElementById('voice-command-btn').disabled = false;
-    };
-    
-    recognition.onend = () => {
-        document.getElementById('voice-command-btn').disabled = false;
-        if (!voiceStatus.textContent.includes("System heard")) {
-             voiceStatus.textContent = 'System Listening Ended.';
-        }
-    };
-
-    recognition.start();
+    container.appendChild(div);
+  });
 }
 
-function handleVoiceCommand(command) {
-    const messageDisplay = document.getElementById('message');
-    command = command.replace('system', '').trim(); // Remove "System" trigger word
+// Claim Reward
+document.getElementById('completeQuest').onclick = () => {
+  playClick();
+  if (player.completedToday) return alert("Already claimed today!");
 
-    if (command.includes("complete quest") || command.includes("finish quest")) {
-        messageDisplay.textContent = `[SYSTEM CONFIRMATION] Executing: Quest Complete...`;
-        handleQuestCompletion();
-    } else if (command.includes("allocate strength") || command.includes("add strength")) {
-        handleStatAllocation({ target: { dataset: { stat: 'str' } } });
-    } else if (command.includes("allocate stamina") || command.includes("add stamina")) {
-        handleStatAllocation({ target: { dataset: { stat: 'sta' } } });
-    } else if (command.includes("status")) {
-        messageDisplay.textContent = `[SYSTEM REPORT] Current Level is ${player.level}. Available Stat Points: ${player.statPoints}.`;
-    } else {
-        messageDisplay.textContent = `[SYSTEM] Command not recognized: "${command}". Try "complete quest".`;
+  let expGain = 250 + (player.level * 50);
+  player.exp += expGain;
+  player.completedToday = true;
+  savePlayer();
+
+  levelUpCheck();
+  updatePlayerUI();
+  alert(`Daily Quest Cleared! +${expGain} EXP`);
+};
+
+// Level Up Logic
+function levelUpCheck() {
+  while (player.exp >= player.expToNext) {
+    player.exp -= player.expToNext;
+    player.level++;
+    player.expToNext = Math.floor(player.expToNext * 1.5);
+    levelUpSfx.play();
+    showLevelUp();
+
+    // MONARCH AWAKENING AT LEVEL 50
+    if (player.level === 50 && !player.isMonarch) {
+      player.isMonarch = true;
+      savePlayer();
+      ashbornVoice.play();
+      document.getElementById('ashbornAwaken').classList.remove('hidden');
+      document.body.classList.add('monarch-mode');
+      setTimeout(() => {
+        document.getElementById('ashbornAwaken').classList.add('hidden');
+      }, 7000);
     }
+  }
 }
 
+function showLevelUp() {
+  const popup = document.getElementById('levelUpPopup');
+  popup.classList.remove('hidden');
+  setTimeout(() => popup.classList.add('hidden'), 4000);
+}
 
-// --- 6. INITIALIZATION ---
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. Check for penalty/reset when the page loads
-    checkDailyReset(); 
+function updatePlayerUI() {
+  document.getElementById('playerLevel').textContent = player.level;
+  document.getElementById('playerExp').textContent = player.exp;
+  document.getElementById('expToNext').textContent = player.expToNext;
+  document.getElementById('playerRank').textContent = player.level >= 50 ? "SHADOW MONARCH" : 
+                                                  player.level >= 30 ? "S-Rank" : 
+                                                  player.level >= 20 ? "A-Rank" : "E-Rank";
 
-    // 2. Attach button handlers
-    document.getElementById('complete-quest-btn').addEventListener('click', handleQuestCompletion);
-    document.getElementById('voice-command-btn').addEventListener('click', startSpeechRecognition);
-    
-    document.querySelectorAll('.allocate-btn').forEach(button => {
-        button.addEventListener('click', handleStatAllocation);
-    });
+  const percent = (player.exp / player.expToNext) * 100;
+  document.getElementById('expFill').style.width = percent + '%';
 
-    // 3. Render the initial state
-    renderStatus();
-    renderQuests();
-    
-    // Save current status every 5 seconds (Persistence)
-    setInterval(savePlayerState, 5000); 
-});
+  // Shadow Army Count
+  const army = player.level >= 50 ? (player.level - 49) * 10 : 0;
+  document.getElementById('armyCount').textContent = army;
+}
+
+// Timer
+function startTimer() {
+  setInterval(() => {
+    const now = new Date();
+    const tomorrow = new Date();
+    tomorrow.setHours(24,0,0,0);
+    const diff = tomorrow - now;
+    const h = String(Math.floor(diff / 3600000)).padStart(2,'0');
+    const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2,'0');
+    const s = String(Math.floor((diff % 60000) / 1000)).padStart(2,'0');
+    document.getElementById('timer').textContent = `${h}:${m}:${s}`;
+  }, 1000);
+}
+
+// Init
+if (!player.gender) {
+  document.getElementById('genderSelect').classList.add('active');
+  document.querySelectorAll('.gender-card').forEach(card => {
+    card.onclick = () => {
+      playClick();
+      player.gender = card.dataset.gender;
+      document.getElementById('playerAvatar').src = `sources/${player.gender}-avatar.png`;
+      savePlayer();
+      document.getElementById('genderSelect').classList.remove('active');
+      document.getElementById('mainScreen').classList.add('active');
+      checkDailyReset();
+      loadDailyQuests();
+      updatePlayerUI();
+      startTimer();
+      checkBossRaid();
+      bgm.play();
+    };
+  });
+} else {
+  document.getElementById('mainScreen').classList.add('active');
+  document.getElementById('playerAvatar').src = `sources/${player.gender}-avatar.png`;
+  if (player.isMonarch) document.body.classList.add('monarch-mode');
+  checkDailyReset();
+  loadDailyQuests();
+  updatePlayerUI();
+  startTimer();
+  checkBossRaid();
+}

@@ -1,67 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[STATUS WINDOW] Monarch System</title>
-    <link rel="stylesheet" href="style.css"> 
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Monarch System | Only I Level Up</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Rajdhani:wght@600&display=swap" rel="stylesheet">
 </head>
 <body>
+  <audio id="bgm" loop>
+    <source src="sources/solo.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="clickSfx">
+    <source src="sources/click sound.wav" type="audio/wav">
+  </audio>
+  <audio id="levelUpSfx">
+    <source src="sources/levelup.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="ashbornVoice">
+    <source src="sources/ashborn.mp3" type="audio/mpeg">
+  </audio>
 
-    <div class="container">
-        <div class="status-window">
-            <h1>[STATUS WINDOW]</h1>
-            <p class="status-level-info">Name: <span id="player-name">Sung Jin-Woo</span> | Level: <span id="player-level">1</span></p>
-            
-            <div class="xp-text">
-                XP: <span id="player-xp-current">0</span> / <span id="player-xp-max">100</span>
-            </div>
-            <div class="xp-bar-container">
-                <div class="xp-bar" id="xp-progress-bar"></div>
-            </div>
-
-            <hr>
-            <h2>Stat Points Available: <span id="stat-points-display">0</span></h2>
-            <hr>
-
-            <div class="stat-item">
-                <p>Strength (STR): <span class="stat-value" id="stat-str">10</span></p>
-                <button class="allocate-btn" data-stat="str">+</button>
-            </div>
-            <div class="stat-item">
-                <p>Stamina (STA): <span class="stat-value" id="stat-sta">10</span></p>
-                <button class="allocate-btn" data-stat="sta">+</button>
-            </div>
-            <div class="stat-item">
-                <p>Perception (PER): <span class="stat-value" id="stat-per">10</span></p>
-                <button class="allocate-btn" data-stat="per">+</button>
-            </div>
-            <hr>
-            <div class="stat-item">
-                <p>Health (HP):</p>
-                <span class="stat-value" id="stat-hp">100</span>
-            </div>
-            <div class="stat-item">
-                <p>Protocol:</p>
-                <span class="stat-value" id="protocol-level">LOW-CORE</span>
-            </div>
-        </div>
-
-        <div class="quest-window">
-            <h2>[DAILY QUEST] Complete: Failure will result in a Penalty.</h2>
-            <ul id="quest-list">
-                </ul>
-            
-            <div class="controls">
-                <button id="complete-quest-btn">Complete Daily Quest</button>
-                <button id="voice-command-btn">🎙️ Talk to System</button>
-            </div>
-            
-            <p id="message">System initializing...</p>
-            <p id="voice-status" style="color: var(--color-secondary);"></p>
-        </div>
+  <div class="container" id="app">
+    <!-- Settings -->
+    <div class="settings-bar">
+      <button id="muteBgm">BGM: ON</button>
+      <button id="muteSfx">SFX: ON</button>
     </div>
 
-    <script src="script.js"></script>
+    <!-- Gender Select -->
+    <div id="genderSelect" class="screen">
+      <h1 class="title">THE SYSTEM HAS AWAKENED</h1>
+      <p class="subtitle">Choose your vessel, Hunter</p>
+      <div class="gender-grid">
+        <div class="gender-card" data-gender="male">
+          <img src="sources/male-avatar.png" alt="Male">
+          <p>MALE HUNTER</p>
+        </div>
+        <div class="gender-card" data-gender="female">
+          <img src="sources/female-avatar.png" alt="Female">
+          <p>FEMALE HUNTER</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Screen -->
+    <div id="mainScreen" class="screen hidden">
+      <div class="header">
+        <div class="player-info">
+          <img id="playerAvatar" src="" alt="Avatar" class="avatar">
+          <div>
+            <h2 id="playerName">Shadow Monarch</h2>
+            <p>Rank: <span id="playerRank">E-Rank</span> | Level <span id="playerLevel">1</span></p>
+            <p>EXP <span id="playerExp">0</span>/<span id="expToNext">100</span></p>
+            <div class="exp-bar"><div id="expFill"></div></div>
+            <p id="shadowArmy">Shadow Army: <span id="armyCount">0</span> soldiers</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Weekly Boss Raid Banner -->
+      <div id="bossRaidBanner" class="boss-raid hidden">
+        <h2>RED GATE OPENED! BOSS: BERU</h2>
+        <button id="fightBoss" class="big-btn boss-btn">FIGHT THE ANT KING (10x EXP)</button>
+      </div>
+
+      <!-- Daily Quest -->
+      <div class="daily-quest">
+        <h2>DAILY QUEST: <span id="questTitle">Become Stronger to Survive</span></h2>
+        <div id="questList"></div>
+        <button id="completeQuest" class="big-btn">CLAIM REWARD</button>
+      </div>
+
+      <div class="status">
+        <p>Next Reset: <span id="timer">--:--:--</span></p>
+        <p id="bossTimer"></p>
+      </div>
+    </div>
+
+    <!-- Level Up Popup -->
+    <div id="levelUpPopup" class="popup hidden">
+      <h1>LEVEL UP!</h1>
+      <p>You have grown stronger...</p>
+    </div>
+
+    <!-- Ashborn Awakening (Level 50) -->
+    <div id="ashbornAwaken" class="popup hidden">
+      <h1>ARISE.</h1>
+      <p style="font-size:2rem; margin-top:20px;">I am... the Shadow Monarch.</p>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>

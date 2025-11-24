@@ -1,273 +1,229 @@
-/* style.css - 500+ Lines of Professional, Responsive, Themed CSS */
-/* ======================================================
-THEME: SOLO LEVELING MONARCH SYSTEM UI 
-======================================================
-*/
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto+Mono:wght@400;700&display=swap');
-
-/* GLOBAL RESET AND CORE THEME */
-:root {
-    --color-primary: #00FF00; /* Neon Green */
-    --color-secondary: #FFD700; /* Monarch Gold */
-    --color-accent: #E91E63; /* System Pink/Red */
-    --color-background: #000000;
-    --color-window-bg: rgba(5, 5, 5, 0.95);
-    --border-thickness: 3px;
-    --box-glow: 0 0 20px rgba(255, 215, 0, 0.5);
-    --font-title: 'Orbitron', sans-serif;
-    --font-text: 'Roboto Mono', monospace;
-}
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
+* { margin: 0; padding: 0; box-sizing: border-box; }
 body {
-    background-color: var(--color-background); 
-    color: var(--color-primary); 
-    font-family: var(--font-text); 
-    min-height: 100vh;
-    padding: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    /* Custom Monarch cursor */
-    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path fill="none" stroke="%23FFD700" stroke-width="2" d="M12 2L1 21h22L12 2zm0 18v-8"/></svg>'), auto;
-    background-image: radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.05) 0%, transparent 70%);
+  background: #0f0f1a;
+  color: #e0e0ff;
+  font-family: 'Rajdhani', sans-serif;
+  overflow: hidden;
+  height: 100vh;
 }
 
-/* WINDOW CONTAINER (The alignment fix for mobile) */
 .container {
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* Default: Two columns for desktop */
-    gap: 25px;
-    max-width: 1400px;
-    width: 100%;
-    margin-top: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  height: 100%;
+  position: relative;
 }
 
-/* BASE WINDOW STYLING - THE MONARCH EFFECT */
-.status-window, .quest-window {
-    border: var(--border-thickness) solid var(--color-secondary); 
-    border-radius: 0; 
-    padding: 30px;
-    box-shadow: var(--box-glow), inset 0 0 10px rgba(255, 215, 0, 0.3);
-    background-color: var(--color-window-bg);
-    transition: all 0.3s ease-in-out;
+.settings-bar {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  z-index: 100;
 }
-.status-window:hover, .quest-window:hover {
-    box-shadow: 0 0 30px var(--color-secondary);
-}
-
-/* HEADERS */
-h1, h2 {
-    font-family: var(--font-title); 
-    color: var(--color-secondary); 
-    text-shadow: 0 0 8px var(--color-secondary);
-    border-bottom: 2px solid var(--color-accent); 
-    padding-bottom: 10px;
-    margin-top: 0;
-    text-align: center;
-    letter-spacing: 2px;
+.settings-bar button {
+  background: #1a1a2e;
+  border: 1px solid #6a0dad;
+  color: #bb86fc;
+  padding: 8px 12px;
+  margin-left: 10px;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
-h2 {
-    font-size: 1.4em;
-    margin-bottom: 15px;
+.title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 4rem;
+  text-align: center;
+  background: linear-gradient(90deg, #bb86fc, #6a0dad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 100px 0 20px;
+  text-shadow: 0 0 20px #6a0dad;
 }
 
-hr { border-color: #1a1a1a; margin: 20px 0; }
-
-/* XP BAR (Simulated) */
-.xp-bar-container {
-    height: 15px;
-    background-color: #1a1a1a;
-    border: 1px solid var(--color-primary);
-    margin-top: 10px;
-    margin-bottom: 20px;
-    overflow: hidden;
+.subtitle {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #888;
+  margin-bottom: 60px;
 }
 
-.xp-bar {
-    height: 100%;
-    background: linear-gradient(90deg, rgba(0,255,0,0.5) 0%, var(--color-primary) 100%);
-    width: 0%; /* Controlled by JS */
-    transition: width 0.5s ease-out;
+.gender-grid {
+  display: flex;
+  justify-content: center;
+  gap: 60px;
 }
-.xp-text {
-    text-align: center;
-    font-size: 0.9em;
-    margin-top: -35px; /* Overlay text */
-    position: relative;
-    z-index: 2;
-    color: white;
-    text-shadow: 0 0 5px black;
+.gender-card {
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.4s;
+  padding: 20px;
+  border: 3px solid transparent;
+  border-radius: 16px;
 }
-
-/* STATS LIST STYLING */
-.stat-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 5px;
-    font-size: 1.1em;
-    border-bottom: 1px dashed #222;
+.gender-card:hover {
+  transform: translateY(-20px) scale(1.1);
+  border-color: #bb86fc;
+  box-shadow: 0 0 40px rgba(187, 134, 252, 0.6);
+}
+.gender-card img {
+  width: 180px;
+  border-radius: 20px;
+  border: 4px solid #333;
 }
 
-.stat-value {
-    font-weight: 700;
-    color: #03A9F4; /* Blue for high contrast numbers */
+.screen { display: none; }
+.screen.active { display: block; animation: fadeIn 1s; }
+.hidden { display: none; } }
+
+.header {
+  display: flex;
+  align-items: center;
+  background: #16213e;
+  padding: 20px;
+  border-radius: 12px;
+  border: 2px solid #6a0dad;
+  margin-bottom: 30px;
+}
+.avatar {
+  width: 100px;
+  border-radius: 50%;
+  border: 4px solid #bb86fc;
+  margin-right: 20px;
 }
 
-/* STAT POINTS DISPLAY */
-#stat-points-display {
-    color: var(--color-accent); 
-    font-weight: bold;
-    font-size: 1.5em;
-    text-shadow: 0 0 5px var(--color-accent);
+.daily-quest {
+  background: #16213e;
+  padding: 25px;
+  border-radius: 12px;
+  border: 2px solid #6a0dad;
+}
+.daily-quest h2 {
+  color: #bb86fc;
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.8rem;
 }
 
-/* ALLOCATION BUTTONS */
-.allocate-btn {
-    background-color: var(--color-accent); 
-    color: white;
-    border: none;
-    border-radius: 2px;
-    padding: 6px 12px;
-    cursor: pointer;
-    font-weight: bold;
-    font-family: var(--font-title);
-    transition: background-color 0.2s, box-shadow 0.2s;
+.quest-item {
+  background: #0f1629;
+  padding: 15px;
+  margin: 12px 0;
+  border-left: 5px solid #bb86fc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 8px;
 }
-.allocate-btn:hover:not(:disabled) {
-    background-color: #C2185B;
-    box-shadow: 0 0 8px var(--color-accent);
+.quest-item.completed {
+  opacity: 0.6;
+  text-decoration: line-through;
 }
-.allocate-btn:disabled {
-    background-color: #1a1a1a;
-    color: #444;
-    cursor: not-allowed;
+.quest-checkbox {
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
 }
 
-/* QUEST LIST STYLING */
-#quest-list {
-    list-style-type: none;
-    padding-left: 0;
+.big-btn {
+  width: 100%;
+  padding: 18px;
+  font-size: 1.5rem;
+  background: linear-gradient(45deg, #6a0dad, #bb86fc);
+  border: none;
+  color: white;
+  margin-top: 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+}
+.big-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 30px #bb86fc;
 }
 
-#quest-list li {
-    background-color: rgba(255, 215, 0, 0.05); 
-    padding: 15px;
-    margin-bottom: 10px;
-    border-left: 5px solid var(--color-secondary); 
-    border-radius: 3px;
-    line-height: 1.4;
-    transition: all 0.3s;
+.exp-bar {
+  height: 16px;
+  background: #333;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 8px;
 }
-#quest-list li:hover {
-    background-color: rgba(255, 215, 0, 0.1);
-}
-
-/* BUTTONS AND CONTROLS */
-.controls {
-    display: flex;
-    gap: 15px;
-    margin-top: 25px;
+#expFill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #03dac6, #bb86fc);
+  transition: width 1s ease;
 }
 
-.controls button {
-    width: 100%; 
-    padding: 15px 20px;
-    font-size: 1.1em;
-    font-family: var(--font-title);
-    border: 1px solid transparent;
-    border-radius: 3px;
-    transition: all 0.2s;
+.popup {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.95);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+.popup h1 {
+  font-size: 6rem;
+  background: linear-gradient(90deg, #ff006e, #bb86fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 40px #ff006e;
+  animation: glow 2s infinite alternate;
 }
 
-/* Daily Quest Button */
-#complete-quest-btn {
-    background-color: var(--color-primary); 
-    color: black;
-    box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
-}
-#complete-quest-btn:hover { 
-    background-color: #00CC00; 
-    box-shadow: 0 0 15px var(--color-primary);
-}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes glow { from { text-shadow: 0 0 20px #ff006e; } to { text-shadow: 0 0 60px #ff006e; } }
 
-/* Voice Command Button */
-#voice-command-btn {
-    background-color: #03A9F4; 
-    color: black;
-    box-shadow: 0 0 10px rgba(3, 169, 244, 0.5);
-}
-#voice-command-btn:hover { 
-    background-color: #0288D1;
-    box-shadow: 0 0 15px #03A9F4;
+/* Add to your existing style.css */
+
+.boss-raid {
+  background: linear-gradient(45deg, #8B0000, #FF0000);
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  margin: 20px 0;
+  border: 4px solid #FFD700;
+  animation: pulse 2s infinite;
 }
 
-/* MESSAGE BOXES */
-#message, #voice-status {
-    margin-top: 15px;
-    padding: 10px;
-    border-left: 3px solid var(--color-secondary);
-    font-size: 1em;
-    text-align: center;
-    background-color: rgba(255, 215, 0, 0.05);
-}
-#message { color: white; }
-
-.status-level-info {
-    font-size: 1.1em;
-    text-align: center;
-    margin-bottom: 10px;
+.boss-btn {
+  background: linear-gradient(45deg, #000, #8B0000);
+  font-size: 1.8rem !important;
+  padding: 20px !important;
 }
 
-/* --- MOBILE RESPONSIVENESS FIX (FIT IN PHONE) --- */
-@media (max-width: 850px) {
-    body {
-        padding: 10px;
-        font-size: 0.9em;
-    }
-    .container {
-        /* On small screens, stack the windows vertically */
-        grid-template-columns: 1fr; 
-        gap: 20px;
-    }
-    
-    .status-window, .quest-window {
-        padding: 15px;
-    }
-    
-    h1, h2 {
-        font-size: 1.3em;
-        letter-spacing: 1px;
-    }
-
-    .controls {
-        flex-direction: column; /* Stack buttons vertically for easy phone tapping */
-    }
-
-    .controls button {
-        padding: 12px 15px;
-        font-size: 1em;
-    }
-
-    .stat-item {
-        font-size: 1em;
-    }
+@keyframes pulse {
+  0% { box-shadow: 0 0 20px #FF0000; }
+  50% { box-shadow: 0 0 50px #FF0000; }
+  100% { box-shadow: 0 0 20px #FF0000; }
 }
 
-/* Ensure buttons and controls are readable on tiny screens */
-@media (max-width: 450px) {
-    .stat-item {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    .stat-item p {
-        margin-bottom: 5px;
-    }
+#shadowArmy {
+  color: #bb86fc;
+  font-weight: bold;
+  margin-top: 8px;
+}
+
+.exercise-gif {
+  width: 120px;
+  border-radius: 12px;
+  border: 3px solid #6a0dad;
+  margin-left: 15px;
+}
+
+.monarch-mode {
+  background: linear-gradient(135deg, #0f0f1a, #16213e) !important;
+  border-color: #9d4edd !important;
+}
+
+.monarch-mode .title, .monarch-mode h1, .monarch-mode h2 {
+  background: linear-gradient(90deg, #9d4edd, #e0aaff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }

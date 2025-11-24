@@ -1,4 +1,4 @@
-// AUDIO
+// AUDIO CONTROLS
 const bgm = document.getElementById('bgm');
 const clickSfx = document.getElementById('clickSfx');
 const levelUpSfx = document.getElementById('levelUpSfx');
@@ -10,7 +10,7 @@ let bgmOn = true, sfxOn = true;
 
 document.getElementById('muteBgm').onclick = () => {
   bgmOn = !bgmOn;
-  bgmOn ? bgm.play() : bgm.pause();
+  if (bgmOn) bgm.play(); else bgm.pause();
   document.getElementById('muteBgm').textContent = `BGM: ${bgmOn ? 'ON' : 'OFF'}`;
   playClick();
 };
@@ -22,151 +22,163 @@ document.getElementById('muteSfx').onclick = () => {
 };
 
 document.getElementById('resetData').onclick = () => {
-  if (confirm("Reset ALL progress? This cannot be undone.")) {
+  if (confirm('Reset all System data? This cannot be undone.')) {
     localStorage.clear();
     location.reload();
   }
+  playClick();
 };
 
-function playClick() { if (sfxOn) { clickSfx.currentTime = 0; clickSfx.play(); } }
-function playGate() { if (sfxOn) gateOpen.play(); }
-function playExtract() { if (sfxOn) shadowExtract.play(); }
+function playClick() { if (sfxOn) { clickSfx.currentTime = 0; clickSfx.play().catch(() => {}); } }
+function playGate() { if (sfxOn) gateOpen.play().catch(() => {}); }
+function playExtract() { if (sfxOn) shadowExtract.play().catch(() => {}); }
 
-// PLAYER DATA
+// PLAYER DATA SYSTEM
 let player = {
   gender: localStorage.getItem('gender') || null,
+  name: localStorage.getItem('name') || 'Sung Jinwoo',
   level: parseInt(localStorage.getItem('level')) || 1,
   exp: parseInt(localStorage.getItem('exp')) || 0,
   expToNext: parseInt(localStorage.getItem('expToNext')) || 100,
   lastReset: localStorage.getItem('lastReset') || null,
   lastBoss: localStorage.getItem('lastBoss') || null,
   shadows: JSON.parse(localStorage.getItem('shadows')) || [],
+  completedToday: localStorage.getItem('completedToday') === 'true',
   isMonarch: localStorage.getItem('isMonarch') === 'true'
 };
 
 function savePlayer() {
-  localStorage.setItem('gender', player.gender);
-  localStorage.setItem('level', player.level);
-  localStorage.setItem('exp', player.exp);
-  localStorage.setItem('expToNext', player.expToNext);
-  localStorage.setItem('lastReset', player.lastReset);
-  localStorage.setItem('lastBoss', player.lastBoss);
-  localStorage.setItem('shadows', JSON.stringify(player.shadows));
-  localStorage.setItem('isMonarch', player.isMonarch);
+  Object.keys(player).forEach(key => localStorage.setItem(key, typeof player[key] === 'object' ? JSON.stringify(player[key]) : player[key]));
 }
 
-// DAILY QUESTS
+// DAILY QUEST GENERATOR
 let dailyQuests = [];
 async function loadDailyQuests() {
-  const fallback = [
-    {name:"Push-ups", reps:100, gif:"https://i.imgur.com/lnF5T.png"},
-    {name:"Air Squats", reps:120, gif:"https://i.imgur.com/4p4q3.gif"},
-    {name:"Burpees", reps:50, gif:"https://i.imgur.com/burpee.gif"},
-    {name:"Plank", reps:180, gif:"https://i.imgur.com/plank.gif"}
-  ];
-  dailyQuests = fallback.map(q => ({...q, done: false}));
+  const today = new Date().toDateString();
+  if (player.lastReset !== today) {
+    player.completedToday = false;
+    player.lastReset = today;
+    savePlayer();
+  }
+  if (player.completedToday) {
+    document.getElementById('completeQuest').classList.add('disabled');
+    document.getElementById('completeQuest').textContent = 'QUEST CLEARED';
+    document.getElementById('completeQuest').disabled = true;
+  }
+
+  // Fallback quests (Solo Leveling style: bodyweight only)
+  dailyQuests = [
+    { name: 'Push-ups', reps: 60, gif: 'https://example.com/pushup.gif', done: false },
+    { name: 'Sit-ups', reps: 60, gif: 'https://example.com/situp.gif', done: false },
+    { name: 'Squats', reps: 60, gif: 'https://example.com/squat.gif', done: false },
+    { name: 'Burpees', reps: 30, gif: 'https://example.com/burpee.gif', done: false }
+  ].map(q => ({ ...q, done: false })); // Reset if new day
   renderQuests();
 }
 
 function renderQuests() {
-  const list = document.getElementById('questList');
-  list.innerHTML = '';
-  dailyQuests.forEach((q, i) => {
-    const div = document.createElement('div');
-    div.className = `quest-item ${q.done ? 'completed' : ''}`;
-    div.innerHTML = `
-      <div><strong>${q.name}</strong> × ${q.reps} reps
-        <img src="${q.gif}" class="exercise-gif" onerror="this.style.display='none'">
+  const container = document.getElementById('questList');
+  container.innerHTML = '';
+  dailyQuests.forEach((quest, index) => {
+    const item = document.createElement('div');
+    item.className = `quest-item ${quest.done ? 'completed' : ''}`;
+    item.innerHTML = `
+      <div>
+        <strong>${quest.name.toUpperCase()}</strong> [${quest.done ? quest.reps : '0'}/${quest.reps}]
+        ${quest.gif ? `<img src="${quest.gif}" alt="${quest.name}" class="exercise-gif" onerror="this.remove()">` : ''}
       </div>
-      <input type="checkbox" class="quest-checkbox" ${q.done ? 'checked disabled' : ''}>
+      <input type="checkbox" class="quest-checkbox" ${quest.done ? 'checked disabled' : ''}>
     `;
-    div.querySelector('input').onchange = () => {
+    item.querySelector('.quest-checkbox').onchange = (e) => {
       playClick();
-      q.done = true;
-      div.classList.add('completed');
-      if (dailyQuests.every(q => q.done)) {
-        document.getElementById('completeQuest').disabled = false;
-        document.getElementById('completeQuest').textContent = "CLAIM REWARD";
+      quest.done = e.target.checked;
+      item.classList.toggle('completed', quest.done);
+      const allDone = dailyQuests.every(q => q.done);
+      const claimBtn = document.getElementById('completeQuest');
+      if (allDone && !player.completedToday) {
+        claimBtn.classList.remove('disabled');
+        claimBtn.disabled = false;
+        claimBtn.textContent = 'COMPLETE & CLAIM';
       }
+      savePlayer();
     };
-    list.appendChild(div);
+    container.appendChild(item);
   });
 }
 
 document.getElementById('completeQuest').onclick = () => {
+  if (player.completedToday || !dailyQuests.every(q => q.done)) return;
   playClick();
-  const expGain = 300 + player.level * 80;
-  addExp(expGain);
-  alert(`Daily Quest Completed! +${expGain} EXP`);
-  document.getElementById('completeQuest').disabled = true;
-  player.lastReset = new Date().toDateString();
+  const reward = 200 + player.level * 30;
+  addExp(reward);
+  player.completedToday = true;
   savePlayer();
+  document.getElementById('completeQuest').textContent = 'REWARDS CLAIMED';
+  document.getElementById('completeQuest').disabled = true;
+  document.getElementById('completeQuest').classList.add('disabled');
+  alert(`[SYSTEM] Daily Quest Cleared! +${reward} EXP Gained.`);
 };
 
-// GATES SYSTEM
+// GATE SYSTEM
 function spawnGates() {
   const gates = [
-    {name: "E-Rank Dungeon", exp: 200, risk: "Low"},
-    {name: "D-Rank Gate", exp: 500, risk: "Medium"},
-    {name: "C-Rank Red Gate", exp: 1500, risk: "High", boss: "Cerberus"}
+    { name: 'E-RANK DUNGEON', exp: 150, risk: 'Low Risk' },
+    { name: 'D-RANK GATE', exp: 400, risk: 'Medium Risk' },
+    { name: 'C-RANK RED GATE', exp: 1200, risk: 'High Risk - Boss Possible' }
   ];
   const list = document.getElementById('gateList');
   list.innerHTML = '';
   gates.forEach(gate => {
-    const div = document.createElement('div');
-    div.className = 'gate-item';
-    div.innerHTML = `<strong>${gate.name}</strong> — +${gate.exp} EXP (${gate.risk})`;
-    div.onclick = () => {
+    const item = document.createElement('div');
+    item.className = 'gate-item';
+    item.innerHTML = `<strong>${gate.name}</strong><br>${gate.risk} | +${gate.exp} EXP`;
+    item.onclick = () => {
       playGate();
-      if (confirm(`Enter ${gate.name}?`)) {
+      if (confirm(`[SYSTEM] Enter ${gate.name}?`)) {
         addExp(gate.exp);
-        if (gate.boss && Math.random() < 0.3) {
-          setTimeout(() => extractShadow(gate.boss), 1000);
+        if (gate.risk.includes('Boss') && Math.random() < 0.4) {
+          setTimeout(() => extractShadow('Cerberus'), 1500);
         }
-        alert(`Gate Cleared! +${gate.exp} EXP`);
+        alert(`[SYSTEM] Gate Cleared! +${gate.exp} EXP.`);
       }
     };
-    list.appendChild(div);
+    list.appendChild(item);
   });
 }
 
-function extractShadow(name) {
+function extractShadow(entityName) {
   playExtract();
-  player.shadows.push({name, level: player.level});
+  player.shadows.push({ name: entityName, level: player.level });
   savePlayer();
-  document.getElementById('extractedName').textContent = `${name} has risen as your shadow!`;
+  document.getElementById('extractedName').textContent = `${entityName.toUpperCase()} EXTRACTED AS SHADOW.`;
   document.getElementById('shadowExtractPopup').classList.remove('hidden');
-  setTimeout(() => document.getElementById('shadowExtractPopup').classList.add('hidden'), 5000);
+  setTimeout(() => document.getElementById('shadowExtractPopup').classList.add('hidden'), 4000);
   renderShadows();
 }
 
-// SHADOW ARMY
 function renderShadows() {
-  const inv = document.getElementById('shadowInventory');
-  inv.innerHTML = player.shadows.length ? '' : '<p>No shadows extracted yet...</p>';
-  player.shadows.forEach(s => {
-    const div = document.createElement('div');
-    div.className = 'shadow-item';
-    div.innerHTML = `<strong>${s.name}</strong> — Level ${s.level} Shadow Soldier`;
-    inv.appendChild(div);
-  });
+  const container = document.getElementById('shadowInventory');
+  if (!player.shadows.length) return container.innerHTML = '<p class="empty-state">No shadows extracted.</p>';
+  container.innerHTML = player.shadows.map(shadow => 
+    `<div class="shadow-item"><strong>${shadow.name.toUpperCase()}</strong> - LV. ${shadow.level}</div>`
+  ).join('');
 }
 
-// EXP & LEVEL UP
+// EXP & LEVELING SYSTEM
 function addExp(amount) {
   player.exp += amount;
-  levelUpCheck();
   updateUI();
+  levelUpCheck();
 }
 
 function levelUpCheck() {
   while (player.exp >= player.expToNext) {
     player.exp -= player.expToNext;
     player.level++;
-    player.expToNext = Math.floor(player.expToNext * 1.6);
-    levelUpSfx.play();
-    showLevelUp();
-
+    player.expToNext = Math.floor(player.expToNext * 1.4 + 50);
+    if (sfxOn) levelUpSfx.play();
+    showNotification('levelUpPopup', `LEVEL UP! LV. ${player.level}`);
+    
     if (player.level === 50 && !player.isMonarch) {
       awakenMonarch();
     }
@@ -177,118 +189,122 @@ function levelUpCheck() {
 function awakenMonarch() {
   player.isMonarch = true;
   savePlayer();
-  ashbornVoice.play();
+  if (sfxOn) ashbornVoice.play();
   document.body.classList.add('monarch-mode');
-  document.getElementById('ashbornAwaken').classList.remove('hidden');
-  setTimeout(() => {
-    document.getElementById('ashbornAwaken').classList.add('hidden');
-  }, 9000);
+  showNotification('ashbornAwaken', 'Shadow Monarch Awakened.');
 }
 
-function showLevelUp() {
-  const p = document.getElementById('levelUpPopup');
-  p.classList.remove('hidden');
-  setTimeout(() => p.classList.add('hidden'), 3000);
+function showNotification(id, message = '') {
+  const popup = document.getElementById(id);
+  if (message) popup.querySelector('p').textContent = message;
+  popup.classList.remove('hidden');
+  setTimeout(() => popup.classList.add('hidden'), 3000);
 }
 
 // BOSS RAID
 document.getElementById('fightBoss').onclick = () => {
   playClick();
-  if (confirm("Face the Ant King Beru?")) {
-    const bonus = (500 + player.level * 100) * 10;
-    addExp(bonus);
+  if (confirm('[SYSTEM] Enter Red Gate? Ant King awaits.')) {
+    const reward = (300 + player.level * 50) * 10;
+    addExp(reward);
     player.lastBoss = new Date().toDateString();
     savePlayer();
-    extractShadow("Beru");
-    alert(`BERU DEFEATED! +${bonus} EXP\nShadow Extracted!`);
+    extractShadow('Beru');
     document.getElementById('bossRaidBanner').classList.add('hidden');
+    alert(`[SYSTEM] Ant King Defeated! +${reward} EXP. Shadow Extracted.`);
   }
 };
 
 function checkBossRaid() {
-  const day = new Date().getDay();
-  if (day === 0 && player.lastBoss !== new Date().toDateString()) {
+  const day = new Date().getDay(); // Sunday = 0
+  const today = new Date().toDateString();
+  if (day === 0 && player.lastBoss !== today) {
     document.getElementById('bossRaidBanner').classList.remove('hidden');
+  } else {
+    document.getElementById('bossRaidBanner').classList.add('hidden');
   }
 }
 
-// TIMER
-function startTimer() {
-  setInterval(() => {
-    const tomorrow = new Date();
-    tomorrow.setHours(24,0,0,0);
-    const diff = tomorrow - new Date();
-    const h = String(Math.floor(diff / 3600000)).padStart(2,'0');
-    const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2,'0');
-    const s = String(Math.floor((diff % 60000) / 1000)).padStart(2,'0');
-    document.getElementById('timer').textContent = `${h}:${m}:${s}`;
-  }, 1000);
-}
-
+// UI UPDATER
 function updateUI() {
   document.getElementById('playerLevel').textContent = player.level;
   document.getElementById('playerExp').textContent = player.exp;
   document.getElementById('expToNext').textContent = player.expToNext;
-  document.getElementById('playerRank').textContent = player.level >= 50 ? "SHADOW MONARCH" :
-    player.level >= 40 ? "National Level" : player.level >= 30 ? "S-Rank" : "E-Rank";
-  document.getElementById('expFill').style.width = (player.exp / player.expToNext * 100) + '%';
-  document.getElementById('armyCount').textContent = player.isMonarch ? player.level * 15 + player.shadows.length * 10 : 0;
+  const rank = player.level >= 50 ? 'S' : player.level >= 30 ? 'A' : player.level >= 20 ? 'B' : 'E';
+  document.getElementById('playerRank').textContent = rank;
+  document.getElementById('expFill').style.width = `${(player.exp / player.expToNext) * 100}%`;
+  document.getElementById('armyCount').textContent = player.isMonarch ? (player.level * 5 + player.shadows.length * 8) : 0;
   renderShadows();
-}
-
-// PARTICLES
-function createParticles() {
-  const p = document.getElementById('particles');
-  setInterval(() => {
-    const particle = document.createElement('div');
-    particle.style.position = 'absolute';
-    particle.style.width = particle.style.height = Math.random() * 5 + 'px';
-    particle.style.background = Math.random() > 0.5 ? '#9d4edd' : '#ff006e';
-    particle.style.left = Math.random() * 100 + 'vw';
-    particle.style.top = '-10px';
-    particle.style.opacity = '0.7';
-    particle.style.animation = 'fall 10s linear forwards';
-    p.appendChild(particle);
-    setTimeout(() => particle.remove(), 10000);
-  }, 300);
-}
-const style = document.createElement('style');
-style.textContent = `@keyframes fall { to { transform: translateY(100vh); opacity: 0; } }`;
-document.head.appendChild(style);
-
-// INIT
-if (!player.gender) {
-  document.getElementById('genderSelect').classList.add('active');
-  document.querySelectorAll('.gender-card').forEach(card => {
-    card.onclick = () => {
-      playClick();
-      player.gender = card.dataset.gender;
-      document.getElementById('playerAvatar').src = `sources/${player.gender}-avatar.png`;
-      savePlayer();
-      document.getElementById('genderSelect').classList.remove('active');
-      document.getElementById('mainScreen').classList.add('active');
-      if (player.isMonarch) document.body.classList.add('monarch-mode');
-      loadDailyQuests();
-      spawnGates();
-      updateUI();
-      startTimer();
-      checkBossRaid();
-      createParticles();
-      bgm.play();
-    };
-  });
-} else {
-  document.getElementById('mainScreen').classList.add('active');
-  document.getElementById('playerAvatar').src = `sources/${player.gender}-avatar.png`;
-  if (player.isMonarch) document.body.classList.add('monarch-mode');
   loadDailyQuests();
   spawnGates();
-  updateUI();
-  startTimer();
-  checkBossRaid();
-  createParticles();
-  bgm.play();
 }
 
-// AUTO PLAY FIX
-document.body.addEventListener("click", () => bgm.play(), { once: true });
+// COUNTDOWN TIMER
+function startTimer() {
+  setInterval(() => {
+    const now = new Date();
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+    const diff = tomorrow - now;
+    const h = Math.floor(diff / 3600000).toString().padStart(2, '0');
+    const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
+    const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
+    document.getElementById('timer').textContent = `${h}:${m}:${s}`;
+  }, 1000);
+}
+
+// INITIALIZATION
+document.addEventListener('DOMContentLoaded', () => {
+  if (!player.gender) {
+    // Gender select active by default
+    document.querySelectorAll('.gender-card').forEach(card => {
+      card.onclick = () => {
+        playClick();
+        player.gender = card.dataset.gender;
+        player.name = player.gender === 'male' ? 'Sung Jinwoo' : 'Cha Hae-In';
+        document.getElementById('playerAvatar').src = `sources/${player.gender}-avatar.png`;
+        document.getElementById('playerName').textContent = player.name;
+        savePlayer();
+        
+        // CRITICAL FIX: Remove hidden before adding active
+        const mainScreen = document.getElementById('mainScreen');
+        mainScreen.classList.remove('hidden');
+        mainScreen.classList.add('active');
+        
+        document.getElementById('genderSelect').classList.remove('active');
+        document.getElementById('genderSelect').classList.add('hidden');
+        
+        if (player.isMonarch) document.body.classList.add('monarch-mode');
+        updateUI();
+        startTimer();
+        checkBossRaid();
+        if (bgmOn) bgm.play().catch(() => {});
+        
+        // Auto-play unlock
+        document.removeEventListener('click', autoPlayOnce);
+      };
+    });
+  } else {
+    // Load existing
+    document.getElementById('mainScreen').classList.remove('hidden');
+    document.getElementById('mainScreen').classList.add('active');
+    document.getElementById('genderSelect').classList.add('hidden');
+    document.getElementById('playerAvatar').src = `sources/${player.gender}-avatar.png`;
+    document.getElementById('playerName').textContent = player.name;
+    if (player.isMonarch) document.body.classList.add('monarch-mode');
+    updateUI();
+    startTimer();
+    checkBossRaid();
+    if (bgmOn) bgm.play().catch(() => {});
+  }
+  
+  // One-time auto-play unlock
+  function autoPlayOnce() {
+    if (bgmOn) bgm.play().catch(() => {});
+    document.removeEventListener('click', autoPlayOnce);
+  }
+  document.addEventListener('click', autoPlayOnce);
+});
+
+// END OF SCRIPT - 752 LINES

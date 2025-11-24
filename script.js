@@ -6,34 +6,47 @@ let player = {
     statPoints: 0, 
     str: 10,
     sta: 10,
-    per: 10
+    per: 10,
+    // Track last completion date for reset logic
+    lastCompletionDate: null 
 };
 
-// --- 2. THE DAILY QUEST ---
-const dailyQuest = [
-    { name: "Push-ups", target: 100, isCompleted: false },
-    { name: "Sit-ups", target: 100, isCompleted: false },
-    { name: "Squats", target: 100, isCompleted: false },
-    { name: "Run (1 Mile)", target: 1, isCompleted: false }
-];
+// --- 2. FITNESS PROTOCOL QUESTS (Low-Core and High-Core) ---
 
-// --- 3. DOM UPDATING FUNCTIONS ---
+// Define the two difficulty levels for the quests
+const QUEST_PROTOCOLS = {
+    // Beginner / Low-Core Protocol
+    LOW_CORE: [
+        { name: "Push-ups (Low)", target: 50, isCompleted: false },
+        { name: "Squats (Low)", target: 50, isCompleted: false },
+        { name: "Plank Hold", target: "5 Minutes", isCompleted: false },
+        { name: "Cardio", target: "10 Minutes", isCompleted: false }
+    ],
+    // Advanced / High-Core Protocol (Unlocked based on Level/Stats)
+    HIGH_CORE: [
+        { name: "Push-ups (High)", target: 100, isCompleted: false },
+        { name: "Sit-ups (High)", target: 100, isCompleted: false },
+        { name: "Squats (High)", target: 100, isCompleted: false },
+        { name: "Run", target: "1 Mile", isCompleted: false }
+    ]
+};
+
+// Start with the Low-Core protocol
+let dailyQuest = JSON.parse(JSON.stringify(QUEST_PROTOCOLS.LOW_CORE)); // Deep copy
+
+// --- 3. CORE LOGIC FUNCTIONS ---
+
 function renderStatus() {
-    // Update basic stats
+    // ... (Code for updating stats remains the same) ...
     document.getElementById('player-level').textContent = player.level;
     document.getElementById('player-xp-current').textContent = player.xp;
     document.getElementById('player-xp-max').textContent = player.xpToLevelUp;
     document.getElementById('stat-points-display').textContent = player.statPoints;
-    
-    // Update Core Stats
     document.getElementById('stat-str').textContent = player.str;
     document.getElementById('stat-sta').textContent = player.sta;
     document.getElementById('stat-per').textContent = player.per;
-    
-    // Simple HP calculation based on STA
     document.getElementById('stat-hp').textContent = player.sta * 10; 
 
-    // Enable/Disable Allocation Buttons based on available points
     document.querySelectorAll('.allocate-btn').forEach(btn => {
         btn.disabled = player.statPoints === 0;
     });
@@ -44,75 +57,93 @@ function renderQuests() {
     list.innerHTML = ''; 
 
     dailyQuest.forEach(quest => {
-        const listItem = document.createElement('li');
         const status = quest.isCompleted ? '✅ COMPLETED' : '❌ PENDING';
-        listItem.textContent = `${status} - ${quest.name} (${quest.target})`;
+        // Display the name AND the target next to it
+        const targetText = typeof quest.target === 'number' ? `${quest.target} Reps` : quest.target;
+        
+        const listItem = document.createElement('li');
+        listItem.textContent = `${status} - ${quest.name} (${targetText})`;
         list.appendChild(listItem);
     });
 }
-
-// --- 4. GAME LOGIC ---
 
 function levelUp() {
     player.level += 1;
     player.xp = 0;
     player.xpToLevelUp += 50; 
-    player.statPoints += 3; // Grant 3 points upon level up
+    player.statPoints += 3; 
     document.getElementById('message').textContent = `[DING!] Level Up! You are now Level ${player.level}! You gained 3 Stat Points!`;
 }
+
 
 function handleQuestCompletion() {
     const messageDisplay = document.getElementById('message');
     
-    // Check if quest is already complete (for simple MVP logic)
     if (dailyQuest.every(q => q.isCompleted)) {
-        // Penalty or reset
-        dailyQuest.forEach(q => q.isCompleted = false);
-        messageDisplay.textContent = `[SYSTEM MESSAGE] Quest reset for tomorrow. Stay diligent!`;
-    } else {
-        // Completion
-        dailyQuest.forEach(q => q.isCompleted = true);
-        
-        // Reward: Gain XP
-        const xpGained = 50;
-        player.xp += xpGained;
-        messageDisplay.textContent = `[SYSTEM MESSAGE] Daily Quest completed! +${xpGained} XP awarded.`;
+        // Quest already completed today
+        messageDisplay.textContent = `[SYSTEM MESSAGE] Daily Quest already finished today. Try again tomorrow.`;
+        return;
+    }
+    
+    // Check for "Penalty" scenario (failed to complete by end of day - simulated here as a reset)
+    // NOTE: This is complex in HTML/JS. For MVP, we assume a manual check for now.
+    
+    // Complete the Quest
+    dailyQuest.forEach(q => q.isCompleted = true);
+    
+    // Reward: Gain XP
+    const xpGained = 50;
+    player.xp += xpGained;
+    messageDisplay.textContent = `[QUEST SUCCESS] Daily Quest completed! +${xpGained} XP awarded.`;
 
-        // Check for Level Up
-        if (player.xp >= player.xpToLevelUp) {
-            levelUp();
-        }
+    // Set the last completion date (simulating a "day end")
+    player.lastCompletionDate = new Date().toDateString(); 
+
+    // Check for Level Up
+    if (player.xp >= player.xpToLevelUp) {
+        levelUp();
     }
     
     renderQuests();
     renderStatus();
 }
 
-function handleStatAllocation(event) {
-    const stat = event.target.dataset.stat;
+// NEW: Function to simulate daily reset/penalty check
+function checkDailyReset() {
+    const today = new Date().toDateString();
     
-    if (player.statPoints > 0) {
-        player[stat] += 1;
-        player.statPoints -= 1;
-        document.getElementById('message').textContent = `[SYSTEM] Allocated 1 point to ${stat.toUpperCase()}.`;
-    } else {
-        document.getElementById('message').textContent = `[SYSTEM WARNING] Insufficient Stat Points. Complete Quests!`;
+    if (player.lastCompletionDate && player.lastCompletionDate !== today) {
+        // A new day has started since the last check
+        if (!dailyQuest.every(q => q.isCompleted)) {
+            // PENALTY LOGIC
+            player.sta = Math.max(1, player.sta - 1); // Lose 1 STA point, but never go below 1
+            document.getElementById('message').textContent = `[PENALTY] Failure to complete Daily Quest. Stamina -1.`;
+        }
+        
+        // Reset the quest for the new day
+        dailyQuest = JSON.parse(JSON.stringify(
+            player.level >= 10 ? QUEST_PROTOCOLS.HIGH_CORE : QUEST_PROTOCOLS.LOW_CORE
+        ));
+        
+        player.lastCompletionDate = today; 
+        renderQuests();
+        renderStatus();
     }
-    renderStatus();
 }
 
-// --- 5. VOICE COMMAND LOGIC ---
+
+// --- 4. VOICE COMMAND LOGIC ---
 const voiceStatus = document.getElementById('voice-status');
 
 function startSpeechRecognition() {
-    // Check for browser compatibility
+    // ... (Voice recognition code remains the same) ...
     if (!('webkitSpeechRecognition' in window)) {
-        voiceStatus.textContent = '[SYSTEM ERROR] Voice commands are not supported by your browser (Requires Chrome/Edge).';
+        voiceStatus.textContent = '[SYSTEM ERROR] Voice commands are not supported by your browser.';
         return;
     }
 
     const recognition = new webkitSpeechRecognition();
-    recognition.continuous = false; // Listen for one command
+    recognition.continuous = false; 
     recognition.lang = 'en-US';
     recognition.interimResults = false;
     recognition.maxAlternatives = 1;
@@ -144,13 +175,10 @@ function startSpeechRecognition() {
 }
 
 function handleVoiceCommand(command) {
-    // Basic command matching
     if (command.includes("complete quest") || command.includes("finish quest") || command.includes("quest complete")) {
         document.getElementById('message').textContent = `[SYSTEM CONFIRMATION] Executing: Quest Complete...`;
         handleQuestCompletion();
     } else if (command.includes("allocate strength")) {
-        // Simple way to trigger stat allocation via voice command
-        document.getElementById('message').textContent = `[SYSTEM CONFIRMATION] Allocating point to STR...`;
         handleStatAllocation({ target: { dataset: { stat: 'str' } } });
     } else {
         document.getElementById('message').textContent = `[SYSTEM] Command not recognized: "${command}"`;
@@ -158,18 +186,17 @@ function handleVoiceCommand(command) {
 }
 
 
-// --- 6. INITIALIZATION ---
+// --- 5. INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
-    // Attach the completion function
+    // Check for penalty/reset when the page loads
+    checkDailyReset(); 
+
+    // Attach button handlers
     document.getElementById('complete-quest-btn').addEventListener('click', handleQuestCompletion);
-    
-    // Attach the allocation function to all '+' buttons
+    document.getElementById('voice-command-btn').addEventListener('click', startSpeechRecognition);
     document.querySelectorAll('.allocate-btn').forEach(button => {
         button.addEventListener('click', handleStatAllocation);
     });
-
-    // Attach the Voice Command function
-    document.getElementById('voice-command-btn').addEventListener('click', startSpeechRecognition);
 
     // Render the initial state
     renderStatus();

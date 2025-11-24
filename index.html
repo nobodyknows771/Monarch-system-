@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[STATUS WINDOW] Monarch System</title>
+    <link rel="stylesheet" href="style.css"> 
+</head>
+<body>
+
+    <div class="container">
+        <div class="status-window">
+            <h1>[STATUS WINDOW]</h1>
+            <p>Name: <span id="player-name">The Monarch</span></p>
+            <p>Level: <span id="player-level">1</span></p>
+            <p>XP: <span id="player-xp-current">0</span> / <span id="player-xp-max">100</span></p>
+            <hr>
+            <h2>Stat Points Available: <span id="stat-points-display">0</span></h2>
+            <hr>
+
+            <div class="stat-item">
+                <p>Strength (STR): <span class="stat-value" id="stat-str">10</span></p>
+                <button class="allocate-btn" data-stat="str">+</button>
+            </div>
+            <div class="stat-item">
+                <p>Stamina (STA): <span class="stat-value" id="stat-sta">10</span></p>
+                <button class="allocate-btn" data-stat="sta">+</button>
+            </div>
+            <div class="stat-item">
+                <p>Perception (PER): <span class="stat-value" id="stat-per">10</span></p>
+                <button class="allocate-btn" data-stat="per">+</button>
+            </div>
+            <hr>
+            <p>Health (HP): <span class="stat-value" id="stat-hp">100</span></p>
+        </div>
+
+        <div class="quest-window">
+            <h2>[DAILY QUEST] Complete: Failure will result in a Penalty.</h2>
+            <ul id="quest-list">
+                </ul>
+            
+            <div class="controls">
+                <button id="complete-quest-btn">Complete Daily Quest</button>
+                <button id="voice-command-btn">🎙️ Talk to System</button>
+            </div>
+            
+            <p id="message"></p>
+            <p id="voice-status" style="margin-top:10px; color: #FFC107;"></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,157 +1,111 @@
-// --- 1. INITIAL SYSTEM STATE ---
+// --- 1. INITIAL PLAYER DATA ---
 let player = {
     level: 1,
     xp: 0,
-    xpToNextLevel: 100,
-    gold: 0,
-    statPoints: 0,
-    stats: {
-        str: 10,
-        agi: 10,
-        sta: 10,
-    }
+    xpToLevelUp: 100,
+    statPoints: 0, // NEW: Points to spend
+    str: 10,
+    sta: 10,
+    per: 10
 };
 
-// --- 2. CORE UI UPDATE FUNCTIONS ---
+// --- 2. THE DAILY QUEST ---
+const dailyQuest = [
+    { name: "Push-ups", target: 100, isCompleted: false },
+    { name: "Sit-ups", target: 100, isCompleted: false },
+    { name: "Squats", target: 100, isCompleted: false },
+    { name: "Run (1 Mile)", target: 1, isCompleted: false }
+];
 
-function updateUI() {
+// --- 3. DOM UPDATING FUNCTIONS ---
+function renderStatus() {
     // Update basic stats
-    document.getElementById('level').textContent = player.level;
-    document.getElementById('gold').textContent = player.gold;
-    document.getElementById('stat-points').textContent = player.statPoints;
+    document.getElementById('player-level').textContent = player.level;
+    document.getElementById('player-xp-current').textContent = player.xp;
+    document.getElementById('player-xp-max').textContent = player.xpToLevelUp;
+    
+    // NEW: Update Stat Points
+    document.getElementById('stat-points-display').textContent = player.statPoints;
+    
+    // Update Core Stats
+    document.getElementById('stat-str').textContent = player.str;
+    document.getElementById('stat-sta').textContent = player.sta;
+    document.getElementById('stat-per').textContent = player.per;
+    
+    // Simple HP calculation based on STA
+    document.getElementById('stat-hp').textContent = player.sta * 10; 
 
-    // Update core attributes
-    document.getElementById('str').textContent = player.stats.str;
-    document.getElementById('agi').textContent = player.stats.agi;
-    document.getElementById('sta').textContent = player.stats.sta;
-
-    // Update XP Bar
-    let xpPercentage = (player.xp / player.xpToNextLevel) * 100;
-    document.getElementById('xp-bar').style.width = `${xpPercentage}%`;
-
-    // Disable stat buttons if no points
-    const statButtons = document.querySelectorAll('.stat-btn');
-    statButtons.forEach(btn => {
+    // Enable/Disable Allocation Buttons based on available points
+    document.querySelectorAll('.allocate-btn').forEach(btn => {
         btn.disabled = player.statPoints === 0;
     });
 }
 
-function systemMessage(message) {
-    const output = document.getElementById('system-output');
-    output.textContent = `System Status: ${message}`;
+function renderQuests() {
+    const list = document.getElementById('quest-list');
+    list.innerHTML = ''; 
+
+    dailyQuest.forEach(quest => {
+        const listItem = document.createElement('li');
+        const status = quest.isCompleted ? '✅ COMPLETED' : '❌ PENDING';
+        listItem.textContent = `${status} - ${quest.name} (${quest.target})`;
+        list.appendChild(listItem);
+    });
 }
 
-// --- 3. GAME LOGIC (XP & LEVELING) ---
+// --- 4. GAME LOGIC ---
 
-function checkLevelUp() {
-    while (player.xp >= player.xpToNextLevel) {
-        player.xp -= player.xpToNextLevel; // Subtract XP needed
-        player.level += 1; // Increase Level
-        player.xpToNextLevel = Math.round(player.xpToNextLevel * 1.5); // Increase requirement
-        player.statPoints += 3; // Grant Stat Points
-        systemMessage(`LEVEL UP! Current Level: ${player.level}. 3 Stat Points Acquired.`);
+function levelUp() {
+    player.level += 1;
+    player.xp = 0;
+    player.xpToLevelUp += 50; 
+    player.statPoints += 3; // Grant 3 points upon level up (NEW)
+    document.getElementById('message').textContent = `[DING!] Level Up! You are now Level ${player.level}! You gained 3 Stat Points!`;
+}
+
+function handleQuestCompletion() {
+    // For simplicity, we assume they complete all quests at once
+    dailyQuest.forEach(q => q.isCompleted = true);
+    renderQuests(); 
+        
+    // Reward: Gain XP
+    player.xp += 50;
+    document.getElementById('message').textContent = `[SYSTEM MESSAGE] Daily Quest completed! +50 XP awarded.`;
+
+    // Check for Level Up
+    if (player.xp >= player.xpToLevelUp) {
+        levelUp();
     }
-    updateUI();
+    
+    renderStatus();
 }
 
-function allocateStat(statKey) {
+function handleStatAllocation(event) {
+    const stat = event.target.dataset.stat;
+    
     if (player.statPoints > 0) {
-        player.stats[statKey] += 1;
+        player[stat] += 1;
         player.statPoints -= 1;
-        systemMessage(`${statKey.toUpperCase()} increased! Current ${statKey.toUpperCase()}: ${player.stats[statKey]}`);
-        updateUI();
+        document.getElementById('message').textContent = `[SYSTEM] Allocated 1 point to ${stat.toUpperCase()}.`;
     } else {
-        systemMessage("Insufficient Stat Points. Complete Quests to Level Up.");
+        document.getElementById('message').textContent = `[SYSTEM WARNING] Insufficient Stat Points. Complete Quests!`;
     }
+    renderStatus();
 }
 
-// --- 4. QUEST & WORKOUT FUNCTIONS ---
-
-function completeDailyQuest() {
-    const xpReward = 25;
-    const goldReward = 5;
-    player.xp += xpReward;
-    player.gold += goldReward;
-    systemMessage(`Daily Quest successful! +${xpReward} XP, +${goldReward} Gold.`);
-    checkLevelUp();
-}
-
-function logWorkout() {
-    const description = document.getElementById('workout-description').value;
-    if (description.trim() === "") {
-        systemMessage("Error: Input a workout description first.");
-        return;
-    }
+// --- 5. INITIALIZATION ---
+document.addEventListener('DOMContentLoaded', () => {
+    // Attach the completion function
+    document.getElementById('complete-quest-btn').addEventListener('click', handleQuestCompletion);
     
-    // Simulate a bigger XP/Gold reward for an 'Invasion'
-    const xpReward = 50;
-    const goldReward = 15;
-    player.xp += xpReward;
-    player.gold += goldReward;
-    
-    systemMessage(`Dungeon Invasion Logged (${description}): +${xpReward} XP, +${goldReward} Gold.`);
-    document.getElementById('workout-description').value = ''; // Clear input
-    checkLevelUp();
-}
-
-// --- 5. VOICE COMMANDS (Web Speech API) ---
-
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-const SpeechSynthesis = window.speechSynthesis;
-
-if (SpeechRecognition && SpeechSynthesis) {
-    const recognition = new SpeechRecognition();
-    recognition.lang = 'en-US';
-    recognition.continuous = false; // Stop listening after one phrase
-    recognition.interimResults = false;
-
-    document.getElementById('voice-toggle').addEventListener('click', () => {
-        try {
-            recognition.start();
-            systemMessage("Listening for command...");
-        } catch (e) {
-            systemMessage("Error: Recognition service already started or denied.");
-        }
+    // Attach the allocation function to all '+' buttons
+    document.querySelectorAll('.allocate-btn').forEach(button => {
+        button.addEventListener('click', handleStatAllocation);
     });
 
-    recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript.toLowerCase();
-        systemMessage(`Command Received: "${transcript}"`);
-        processVoiceCommand(transcript);
-    };
+    // Render the initial state
+    renderStatus();
+    renderQuests();
 
-    recognition.onerror = (event) => {
-        systemMessage(`Voice Error: ${event.error}. Click Activate again.`);
-    };
-
-    function speak(text) {
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.pitch = 1.2; // Slightly higher pitch for a 'system' voice
-        utterance.rate = 1.1;  // Slightly faster rate
-        SpeechSynthesis.speak(utterance);
-    }
-
-    function processVoiceCommand(command) {
-        if (command.includes('log quest complete')) {
-            completeDailyQuest();
-            speak("Daily Quest protocol completed. Rewards distributed.");
-        } else if (command.includes('allocate point to strength')) {
-            allocateStat('str');
-            speak("Strength attribute increased by one.");
-        } else if (command.includes('allocate point to agility')) {
-            allocateStat('agi');
-            speak("Agility attribute increased by one.");
-        } else if (command.includes('what is my level')) {
-            speak(`Player, your current Level is ${player.level}.`);
-        } else {
-            speak("System command not recognized. Please check the command list.");
-        }
-    }
-
-} else {
-    document.getElementById('system-output').textContent = "System Error: Voice commands not supported in this browser.";
-    document.getElementById('voice-toggle').disabled = true;
-}
-
-// Initialize the UI on page load
-updateUI();
+    document.getElementById('message').textContent = 'System Ready. Complete your Daily Quest.';
+});

@@ -1,0 +1,130 @@
+:root {
+    --bg-color: #1a1a2e;
+    --panel-color: #2c2b4c80; /* Semi-transparent blue-purple */
+    --neon-blue: #00ffff;
+    --neon-red: #ff0077;
+    --font-color: #e0e0e0;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--font-color);
+    font-family: 'Orbitron', sans-serif;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.title {
+    color: var(--neon-blue);
+    text-shadow: 0 0 10px var(--neon-blue);
+    font-size: 2.5em;
+    letter-spacing: 5px;
+}
+
+.system-output {
+    background-color: #00000080;
+    border: 1px solid var(--neon-blue);
+    padding: 10px;
+    margin-top: 10px;
+    box-shadow: 0 0 10px var(--neon-blue);
+    animation: pulse 1.5s infinite alternate;
+}
+
+@keyframes pulse {
+    from { opacity: 0.8; }
+    to { opacity: 1; }
+}
+
+.container {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 90%;
+    max-width: 1200px;
+}
+
+.panel {
+    background-color: var(--panel-color);
+    border: 2px solid var(--neon-blue);
+    box-shadow: 0 0 20px var(--neon-blue), inset 0 0 10px var(--neon-blue);
+    padding: 20px;
+    border-radius: 8px;
+    flex: 1 1 300px; /* Makes panels flexible and wrap nicely */
+}
+
+.panel h2, .panel h3 {
+    color: var(--neon-blue);
+    text-shadow: 0 0 5px var(--neon-blue);
+    border-bottom: 1px solid #00ffff50;
+    padding-bottom: 5px;
+    margin-top: 0;
+}
+
+/* STATS STYLING */
+.stat-btn {
+    background-color: var(--neon-red);
+    color: white;
+    border: none;
+    padding: 2px 8px;
+    margin-left: 10px;
+    cursor: pointer;
+    box-shadow: 0 0 5px var(--neon-red);
+}
+
+/* PROGRESS BAR */
+.progress-bar-container {
+    background-color: #ffffff1a;
+    border: 1px solid var(--neon-blue);
+    height: 15px;
+    margin: 10px 0;
+    overflow: hidden;
+}
+
+#xp-bar {
+    height: 100%;
+    width: 0%; /* Controlled by JS */
+    background-color: var(--neon-red);
+    transition: width 0.5s ease-out;
+}
+
+/* BUTTONS */
+button {
+    background-color: var(--neon-blue);
+    color: #1a1a2e;
+    border: none;
+    padding: 10px 15px;
+    margin-top: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 0 10px var(--neon-blue);
+    transition: all 0.2s;
+}
+
+button:hover {
+    background-color: white;
+    box-shadow: 0 0 15px white;
+}
+
+.voice-btn {
+    background-color: var(--neon-red);
+    box-shadow: 0 0 10px var(--neon-red);
+}
+.voice-btn:hover {
+    background-color: #ff55aa;
+}
+.commands-list {
+    font-size: 0.9em;
+    border: 1px dashed #00ffff50;
+    padding: 10px;
+    margin-top: 15px;
+}

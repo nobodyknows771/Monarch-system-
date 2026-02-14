@@ -1,0 +1,228 @@
+/* ==========================
+   Monarch Training System
+   Solo Leveling Theme (Blue + Purple)
+=========================== */
+
+/* GLOBAL */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Orbitron', sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #0a0a0f, #1a1a28);
+    color: #b9c6ff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* LINKS RESET */
+a {
+    text-decoration: none;
+    color: #b9c6ff;
+}
+
+a:hover {
+    color: #7b7bff;
+}
+
+/* HEADER NAVIGATION */
+header {
+    background: rgba(10,10,20,0.9);
+    backdrop-filter: blur(8px);
+    padding: 15px 20px;
+    border-bottom: 1px solid rgba(120,120,255,0.2);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.nav-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+nav ul li a {
+    padding: 8px 15px;
+    border-radius: 6px;
+    transition: 0.2s;
+}
+
+nav ul li a.active,
+nav ul li a:hover {
+    background: rgba(50, 80, 255, 0.25);
+    color: #7b7bff;
+}
+
+/* TITLES */
+.title {
+    font-family: 'Michroma', sans-serif;
+    font-size: 2rem;
+    text-shadow: 0 0 15px #3250ff, 0 0 25px #7b7bff;
+}
+
+/* SOUND CONTROLS */
+#sound-controls {
+    position: fixed;
+    top: 15px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+    z-index: 200;
+}
+
+#sound-controls button {
+    background: rgba(20,20,35,0.7);
+    border: 1px solid #465bff;
+    color: #bfc8ff;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+#sound-controls button:hover {
+    background: rgba(50,50,90,0.8);
+}
+
+/* MAIN CONTENT */
+main {
+    flex: 1;
+    padding: 25px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* SECTIONS */
+section {
+    background: rgba(20,20,35,0.5);
+    border: 1px solid rgba(80,80,150,0.3);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(50,80,255,0.2);
+    backdrop-filter: blur(6px);
+}
+
+/* AVATAR */
+#avatar-section img {
+    width: 140px;
+    border-radius: 50%;
+    border: 3px solid #6f8cff;
+    box-shadow: 0 0 25px #3250ff;
+    display: block;
+    margin: 0 auto 15px auto;
+}
+
+/* XP, LEVEL & RANK */
+#xp-rank p {
+    font-size: 1.1rem;
+    margin: 5px 0;
+}
+
+#level-display {
+    color: #7b7bff;
+    text-shadow: 0 0 10px #7b7bff;
+}
+
+#rank-display {
+    color: #bf7bff;
+    text-shadow: 0 0 10px #bf7bff;
+}
+
+/* QUESTS */
+#quests ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+#quests li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(25,25,50,0.6);
+    border: 1px solid rgba(70,70,120,0.3);
+    padding: 12px 15px;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+
+#quests li.completed {
+    color: #8bff9b;
+    text-decoration: line-through;
+    background: rgba(10,50,20,0.4);
+    border-color: rgba(50,100,50,0.5);
+}
+
+#quests li button {
+    background: rgba(50,50,90,0.7);
+    border: 1px solid #465bff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+#quests li button:hover {
+    background: rgba(70,70,140,0.8);
+}
+
+/* FOOTER */
+footer {
+    background: rgba(10,10,20,0.9);
+    text-align: center;
+    padding: 12px 15px;
+    border-top: 1px solid rgba(120,120,255,0.2);
+    font-size: 0.9rem;
+    color: #b9c6ff;
+}
+
+/* BUTTONS */
+button {
+    font-family: 'Orbitron', sans-serif;
+    transition: 0.2s;
+}
+
+button:hover {
+    transform: scale(1.03);
+}
+
+/* RESPONSIVE */
+@media (min-width: 700px) {
+    main {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+    }
+
+    section {
+        flex: 1 1 300px;
+        max-width: 450px;
+    }
+}
+
+@media (max-width: 450px) {
+    nav ul {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #sound-controls {
+        top: 10px;
+        right: 10px;
+    }
+}

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monarch Training System - Settings</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header Navigation -->
+    <header>
+        <div class="nav-container">
+            <h1 class="title">MONARCH TRAINING SYSTEM</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Dashboard</a></li>
+                    <li><a href="stats.html">Stats</a></li>
+                    <li><a href="exercises.html">Exercises</a></li>
+                    <li><a href="workout.html">Workout</a></li>
+                    <li><a href="settings.html" class="active">Settings</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Sound System -->
+    <audio id="bgm" src="sources/solo.mp3" loop></audio>
+    <audio id="clickSound" src="sources/click sound.wav"></audio>
+    <audio id="levelUpSound" src="sources/levelup.mp3"></audio>
+    <audio id="questSound" src="sources/ashborn.mp3"></audio>
+
+    <main>
+        <section id="sound-settings">
+            <h2>Sound Settings</h2>
+            <div class="sound-toggle">
+                <p>BGM:</p>
+                <button id="toggleBGM">Toggle BGM</button>
+            </div>
+            <div class="sound-toggle">
+                <p>SFX:</p>
+                <button id="toggleSFX">Toggle SFX</button>
+            </div>
+        </section>
+
+        <section id="reset-settings">
+            <h2>Reset Data</h2>
+            <button id="reset-xp">Reset XP & Level</button>
+            <button id="reset-quests">Reset Daily Quests</button>
+            <button id="reset-stats">Reset Stats</button>
+        </section>
+    </main>
+
+    <footer>
+        <p>Monarch Training System &copy; 2025 | Solo Leveling Themed</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Sound toggles (already defined in script.js)
+        document.getElementById("toggleBGM")?.addEventListener("click", ()=>{
+            bgmEnabled = !bgmEnabled;
+            if(bgmEnabled) bgm.play();
+            else bgm.pause();
+            playClick();
+        });
+
+        document.getElementById("toggleSFX")?.addEventListener("click", ()=>{
+            sfxEnabled = !sfxEnabled;
+            playClick();
+        });
+
+        // Reset XP / Level
+        document.getElementById("reset-xp")?.addEventListener("click", ()=>{
+            xp = 0;
+            level = 1;
+            saveToStorage("xp", xp);
+            saveToStorage("level", level);
+            updateXPUI();
+            alert("XP & Level Reset!");
+            playClick();
+        });
+
+        // Reset daily quests
+        document.getElementById("reset-quests")?.addEventListener("click", ()=>{
+            quests.forEach(q => q.done = false);
+            saveToStorage("quests", quests);
+            alert("Daily Quests Reset!");
+            playClick();
+        });
+
+        // Reset stats
+        document.getElementById("reset-stats")?.addEventListener("click", ()=>{
+            stats = {STR:5, AGI:5, VIT:5, INT:5};
+            saveToStorage("stats", stats);
+            alert("Stats Reset!");
+            playClick();
+        });
+    </script>
+</body>
+</html>

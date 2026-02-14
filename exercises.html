@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monarch Training System - Exercises</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header Navigation -->
+    <header>
+        <div class="nav-container">
+            <h1 class="title">MONARCH TRAINING SYSTEM</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Dashboard</a></li>
+                    <li><a href="stats.html">Stats</a></li>
+                    <li><a href="exercises.html" class="active">Exercises</a></li>
+                    <li><a href="workout.html">Workout</a></li>
+                    <li><a href="settings.html">Settings</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Sound System -->
+    <audio id="bgm" src="sources/solo.mp3" loop></audio>
+    <audio id="clickSound" src="sources/click sound.wav"></audio>
+    <audio id="levelUpSound" src="sources/levelup.mp3"></audio>
+    <audio id="questSound" src="sources/ashborn.mp3"></audio>
+
+    <div id="sound-controls">
+        <button id="toggleBGM">🔊 BGM</button>
+        <button id="toggleSFX">🎧 SFX</button>
+    </div>
+
+    <main>
+        <section id="exercise-filter">
+            <h2>Filter Exercises by Muscle</h2>
+            <select id="muscle-select">
+                <option value="chest">Chest</option>
+                <option value="back">Back</option>
+                <option value="legs">Legs</option>
+                <option value="biceps">Biceps</option>
+                <option value="triceps">Triceps</option>
+                <option value="shoulders">Shoulders</option>
+                <option value="abs">Abs</option>
+            </select>
+        </section>
+
+        <section id="exercise-library">
+            <h2>Exercise Library</h2>
+            <div id="exercise-container"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Monarch Training System &copy; 2025 | Solo Leveling Themed</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Fetch default exercises on page load
+        const muscleSelect = document.getElementById("muscle-select");
+        if(muscleSelect) fetchExercises(muscleSelect.value || "chest");
+        muscleSelect?.addEventListener("change", () => {
+            fetchExercises(muscleSelect.value);
+            playClick();
+        });
+    </script>
+</body>
+</html>
